@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">កម្មវិធីតាមដានចំណាយ</string>
+    <string name="title_expense_tracker">ការតាមដានចំណាយ</string>
+
+    <!-- Labels -->
+    <string name="label_amount">ចំនួនទឹកប្រាក់</string>
+    <string name="label_category">ប្រភេទ</string>
+    <string name="label_date">កាលបរិច្ឆេទ</string>
+    <string name="label_description">ពិពណ៌នា</string>
+
+    <!-- Hints & buttons -->
+    <string name="hint_amount_example">ឧ. 12.50</string>
+    <string name="hint_select_date">ជ្រើសរើសកាលបរិច្ឆេទ</string>
+    <string name="btn_save">រក្សាទុក</string>
+
+    <!-- Validation & messages -->
+    <string name="error_amount_required">សូមបញ្ចូលចំនួនទឹកប្រាក់</string>
+    <string name="saved_message">រក្សាទុក៖ $%1$s សម្រាប់ %2$s នៅថ្ងៃទី %3$s</string>
+</resources>

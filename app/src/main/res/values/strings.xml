@@ -1,0 +1,21 @@
+<resources>
+
+    <string name="app_name">Expense Tracker</string>
+    <string name="title_expense_tracker">Expense Tracker</string>
+
+    <!-- Labels -->
+
+    <string name="label_amount">Amount</string>
+    <string name="label_category">Category</string>
+    <string name="label_date">Date</string>
+    <string name="label_description">Description</string>
+
+    <!-- Hints & buttons -->
+    <string name="hint_amount_example">e.g., 12.50</string>
+    <string name="hint_select_date">Select date</string>
+    <string name="btn_save">Save</string>
+
+    <!-- Validation & messages -->
+    <string name="error_amount_required">Please enter an amount</string>
+    <string name="saved_message">Saved: $%1$s for %2$s on %3$s</string>
+</resources>

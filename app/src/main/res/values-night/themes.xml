@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.ExpenseTracker" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Brand colors (dark variant if you want different) -->
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorSecondary">@color/brand_secondary</item>
+    </style>
+</resources>

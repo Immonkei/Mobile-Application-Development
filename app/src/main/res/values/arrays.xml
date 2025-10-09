@@ -1,0 +1,10 @@
+<resources>
+    <string-array name="categories">
+        <item>Food</item>
+        <item>Entertainment</item>
+        <item>Travel</item>
+        <item>Bills</item>
+        <item>Shopping</item>
+        <item>Other</item>
+    </string-array>
+</resources>

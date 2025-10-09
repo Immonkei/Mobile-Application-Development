@@ -1,0 +1,10 @@
+<resources>
+    <string-array name="categories">
+        <item>អាហារ</item>
+        <item>កម្សាន្ត</item>
+        <item>ដំណើរទេសចរណ៍</item>
+        <item>ថ្លៃប្រើប្រាស់</item>
+        <item>ផ្សារទិញ</item>
+        <item>ផ្សេងៗ</item>
+    </string-array>
+</resources>

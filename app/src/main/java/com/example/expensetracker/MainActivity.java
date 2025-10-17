@@ -1,88 +1,93 @@
 package com.example.expensetracker;
 
+
+
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.Button;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.textfield.TextInputEditText;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Spinner spCategory;
-    private TextInputEditText etAmount, etDate, etDescription;
+    private static final int ADD_EXPENSE_REQUEST = 100;
 
-    private final SimpleDateFormat dateFormat =
-            new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private TextView tvStatus;
+    private Button btnAddExpense, btnViewDetail;
+
+    // Stored last expense
+    private String amount, currency, category, remark, date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        spCategory = findViewById(R.id.spCategory);
-        etAmount   = findViewById(R.id.etAmount);
-        etDate     = findViewById(R.id.etDate);
-        etDescription = findViewById(R.id.etDescription);
+        tvStatus = findViewById(R.id.tvStatus);
+        btnAddExpense = findViewById(R.id.btnAddExpense);
+        btnViewDetail = findViewById(R.id.btnViewDetail);
 
-        // Spinner from resources (auto-localized)
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this, R.array.categories, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spCategory.setAdapter(adapter);
+        // Initial UI
+        tvStatus.setText(getString(R.string.last_expense_initial));
+        btnViewDetail.setEnabled(false);
 
-        // MaterialDatePicker for date selection
-        etDate.setOnClickListener(v -> showDatePicker());
-
-        // Save
-        findViewById(R.id.btnSave).setOnClickListener(this::onSave);
-    }
-
-    private void showDatePicker() {
-        MaterialDatePicker<Long> picker = MaterialDatePicker.Builder
-                .datePicker()
-                .setTitleText(R.string.hint_select_date)
-                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                .build();
-
-        picker.addOnPositiveButtonClickListener(selection -> {
-            if (selection != null) {
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                cal.setTimeInMillis(selection);
-                // Optional: display in local timezone
-                cal.setTimeZone(TimeZone.getDefault());
-                etDate.setText(dateFormat.format(cal.getTime()));
-            }
+        btnAddExpense.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
+            startActivityForResult(intent, ADD_EXPENSE_REQUEST); // per Lab 3 requirement
         });
 
-        picker.show(getSupportFragmentManager(), "date_picker");
+        btnViewDetail.setOnClickListener(v -> {
+            Intent detail = new Intent(MainActivity.this, ExpenseDetailActivity.class);
+            detail.putExtra("amount", amount);
+            detail.putExtra("currency", currency);
+            detail.putExtra("category", category);
+            detail.putExtra("remark", remark);
+            detail.putExtra("date", date);
+            startActivity(detail);
+        });
+
+        if (savedInstanceState != null) {
+            amount   = savedInstanceState.getString("amount");
+            currency = savedInstanceState.getString("currency");
+            category = savedInstanceState.getString("category");
+            remark   = savedInstanceState.getString("remark");
+            date     = savedInstanceState.getString("date");
+            updateStatus();
+        }
     }
 
-    private void onSave(@NonNull View v) {
-        String amount = etAmount.getText() == null ? "" : etAmount.getText().toString().trim();
-        String date = etDate.getText() == null ? "" : etDate.getText().toString().trim();
-        String desc = etDescription.getText() == null ? "" : etDescription.getText().toString().trim();
-        String category = spCategory.getSelectedItem() != null ? spCategory.getSelectedItem().toString() : "";
-
-        if (amount.isEmpty()) {
-            etAmount.setError(getString(R.string.error_amount_required));
-            etAmount.requestFocus();
-            return;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ADD_EXPENSE_REQUEST && resultCode == RESULT_OK && data != null) {
+            amount   = data.getStringExtra("amount");
+            currency = data.getStringExtra("currency");
+            category = data.getStringExtra("category");
+            remark   = data.getStringExtra("remark");
+            date     = data.getStringExtra("date");
+            updateStatus();
         }
+    }
 
-        String msg = getString(R.string.saved_message, amount, category, date.isEmpty() ? "—" : date);
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    private void updateStatus() {
+        if (amount != null && currency != null) {
+            tvStatus.setText(getString(R.string.last_expense_format, amount, currency));
+            btnViewDetail.setEnabled(true);
+        } else {
+            tvStatus.setText(getString(R.string.last_expense_initial));
+            btnViewDetail.setEnabled(false);
+        }
+    }
 
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("amount", amount);
+        outState.putString("currency", currency);
+        outState.putString("category", category);
+        outState.putString("remark", remark);
+        outState.putString("date", date);
     }
 }

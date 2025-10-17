@@ -1,10 +1,16 @@
 <resources>
+    <string-array name="currencies">
+        <item>KHR</item>
+        <item>USD</item>
+        <item>THB</item>
+        <item>VND</item>
+    </string-array>
+
     <string-array name="categories">
         <item>Food</item>
-        <item>Entertainment</item>
-        <item>Travel</item>
-        <item>Bills</item>
+        <item>Transport</item>
         <item>Shopping</item>
+        <item>Entertainment</item>
         <item>Other</item>
     </string-array>
 </resources>

@@ -1,7 +1,9 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Material 3 DayNight so it adapts to system theme automatically -->
     <style name="Theme.ExpenseTracker" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Brand colors (dark variant if you want different) -->
+        <!-- Brand colors (light) -->
         <item name="colorPrimary">@color/brand_primary</item>
         <item name="colorSecondary">@color/brand_secondary</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/brand_primary_dark</item>
     </style>
 </resources>

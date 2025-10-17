@@ -1,21 +1,29 @@
 <resources>
-
+    <!-- App -->
     <string name="app_name">Expense Tracker</string>
-    <string name="title_expense_tracker">Expense Tracker</string>
+    <string name="manage_your_expense_title">MIN PHANITH</string>
+    <string name="last_expense_initial">My last expense was 0</string>
+    <string name="last_expense_format">My last expense was %1$s %2$s</string>
 
-    <!-- Labels -->
+    <!-- Buttons -->
+    <string name="btn_add_new_expense">Add New Expense</string>
+    <string name="btn_view_detail_expense">View Detail Expense</string>
+    <string name="btn_add_expense">Add Expense</string>
+    <string name="btn_back_to_home">Back to Home</string>
 
-    <string name="label_amount">Amount</string>
-    <string name="label_category">Category</string>
-    <string name="label_date">Date</string>
-    <string name="label_description">Description</string>
+    <!-- Form hints -->
+    <string name="hint_amount">Amount</string>
+    <string name="hint_remark">Remark</string>
+    <string name="hint_created_date">Created Date</string>
 
-    <!-- Hints & buttons -->
-    <string name="hint_amount_example">e.g., 12.50</string>
-    <string name="hint_select_date">Select date</string>
-    <string name="btn_save">Save</string>
+    <!-- Detail labels -->
+    <string name="detail_amount_label">Amount: %1$s</string>
+    <string name="detail_currency_label">Currency: %1$s</string>
+    <string name="detail_category_label">Category: %1$s</string>
+    <string name="detail_remark_label">Remark: %1$s</string>
+    <string name="detail_date_label">Created Date: %1$s</string>
 
-    <!-- Validation & messages -->
-    <string name="error_amount_required">Please enter an amount</string>
-    <string name="saved_message">Saved: $%1$s for %2$s on %3$s</string>
+    <!-- Errors -->
+    <string name="error_amount_required">Amount is required</string>
+    <string name="error_date_required">Created date is required</string>
 </resources>

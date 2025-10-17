@@ -1,19 +1,24 @@
 <resources>
     <string name="app_name">កម្មវិធីតាមដានចំណាយ</string>
-    <string name="title_expense_tracker">ការតាមដានចំណាយ</string>
+    <string name="manage_your_expense_title">MIN PHANITH</string>
+    <string name="last_expense_initial">ចំណាយចុងក្រោយរបស់ខ្ញុំគឺ 0</string>
+    <string name="last_expense_format">ចំណាយចុងក្រោយរបស់ខ្ញុំគឺ %1$s %2$s</string>
 
-    <!-- Labels -->
-    <string name="label_amount">ចំនួនទឹកប្រាក់</string>
-    <string name="label_category">ប្រភេទ</string>
-    <string name="label_date">កាលបរិច្ឆេទ</string>
-    <string name="label_description">ពិពណ៌នា</string>
+    <string name="btn_add_new_expense">បន្ថែមចំណាយថ្មី</string>
+    <string name="btn_view_detail_expense">មើលព័ត៌មានលម្អិត</string>
+    <string name="btn_add_expense">បន្ថែមចំណាយ</string>
+    <string name="btn_back_to_home">ត្រឡប់ទៅទំព័រដើម</string>
 
-    <!-- Hints & buttons -->
-    <string name="hint_amount_example">ឧ. 12.50</string>
-    <string name="hint_select_date">ជ្រើសរើសកាលបរិច្ឆេទ</string>
-    <string name="btn_save">រក្សាទុក</string>
+    <string name="hint_amount">ចំនួន</string>
+    <string name="hint_remark">ចំណាំ</string>
+    <string name="hint_created_date">កាលបរិច្ឆេទបង្កើត</string>
 
-    <!-- Validation & messages -->
-    <string name="error_amount_required">សូមបញ្ចូលចំនួនទឹកប្រាក់</string>
-    <string name="saved_message">រក្សាទុក៖ $%1$s សម្រាប់ %2$s នៅថ្ងៃទី %3$s</string>
+    <string name="detail_amount_label">ចំនួន៖ %1$s</string>
+    <string name="detail_currency_label">រូបិយប័ណ្ណ៖ %1$s</string>
+    <string name="detail_category_label">ប្រភេទ៖ %1$s</string>
+    <string name="detail_remark_label">ចំណាំ៖ %1$s</string>
+    <string name="detail_date_label">កាលបរិច្ឆេទ៖ %1$s</string>
+
+    <string name="error_amount_required">សូមបញ្ចូលចំនួនចំណាយ</string>
+    <string name="error_date_required">សូមជ្រើសកាលបរិច្ឆេទ</string>
 </resources>

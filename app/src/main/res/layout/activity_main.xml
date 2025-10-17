@@ -2,128 +2,104 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:background="?attr/colorSurfaceContainerLowest"
     tools:context=".MainActivity">
 
-    <!-- Logo -->
-    <ImageView
-        android:id="@+id/imgLogo"
-        android:layout_width="206dp"
-        android:layout_height="206dp"
-        android:layout_marginTop="32dp"
-        android:src="@drawable/logo_expense"
-        android:contentDescription="@string/title_expense_tracker"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!-- 1. Improved Header -->
 
-    <!-- Title -->
+    <!-- 2. Status Information Presented in a Card -->
+
     <TextView
         android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/title_expense_tracker"
-        android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imgLogo" />
-
-    <!-- Amount -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilAmount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="36dp"
+        android:text="@string/manage_your_expense_title"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+        android:textColor="?attr/colorOnSurface"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardStatus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp"
-        android:hint="@string/label_amount"
+        app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etAmount"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_amount_example"
-            android:inputType="numberDecimal" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:padding="16dp">
 
-    <!-- Category Label -->
-    <TextView
-        android:id="@+id/tvCategoryLabel"
+            <ImageView
+                android:id="@+id/iconStatus"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_receipt"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?attr/colorPrimary"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/last_expense_initial"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/iconStatus"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 3. Primary Action Button (Add Expense) -->
+    <!-- This is the most important button, so it's a prominent FAB -->
+
+    <!-- 4. Secondary Action Button (View Detail) -->
+    <!-- This button is less important, so it has a less prominent style (Outlined) -->
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/btnAddExpense"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/label_category"
-        android:textColor="?attr/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tilAmount" />
-
-    <!-- Category Spinner -->
-    <Spinner
-        android:id="@+id/spCategory"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="116dp"
+        android:text="@string/btn_add_new_expense"
+        app:icon="@drawable/ic_add"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvCategoryLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/btnViewDetail"
+        app:layout_constraintVertical_bias="0.041" />
 
-    <!-- Date -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilDate"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/label_date"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spCategory">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="false"
-            android:hint="@string/hint_select_date" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Description -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilDescription"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/label_description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tilDate">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:lines="3" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Save Button -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSave"
-        style="?attr/materialButtonStyle"
+        android:id="@+id/btnViewDetail"
+        style="?attr/materialButtonOutlinedStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="24dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:text="@string/btn_save"
-        app:cornerRadius="16dp"
+        android:text="@string/btn_view_detail_expense"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tilDescription" />
+        app:layout_constraintTop_toBottomOf="@id/cardStatus" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

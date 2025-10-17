@@ -4,7 +4,7 @@
     <string name="last_expense_initial">ចំណាយចុងក្រោយរបស់ខ្ញុំគឺ 0</string>
     <string name="last_expense_format">ចំណាយចុងក្រោយរបស់ខ្ញុំគឺ %1$s %2$s</string>
 
-    <string name="btn_add_new_expense">បន្ថែមចំណាយថ្មី</string>
+    <string name="btn_add_new_expense">ចំណាយថ្មី</string>
     <string name="btn_view_detail_expense">មើលព័ត៌មានលម្អិត</string>
     <string name="btn_add_expense">បន្ថែមចំណាយ</string>
     <string name="btn_back_to_home">ត្រឡប់ទៅទំព័រដើម</string>

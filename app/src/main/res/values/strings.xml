@@ -6,7 +6,7 @@
     <string name="last_expense_format">My last expense was %1$s %2$s</string>
 
     <!-- Buttons -->
-    <string name="btn_add_new_expense">Add New Expense</string>
+    <string name="btn_add_new_expense"> New Expense</string>
     <string name="btn_view_detail_expense">View Detail Expense</string>
     <string name="btn_add_expense">Add Expense</string>
     <string name="btn_back_to_home">Back to Home</string>

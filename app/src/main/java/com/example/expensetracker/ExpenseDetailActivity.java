@@ -1,6 +1,5 @@
 package com.example.expensetracker;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -30,8 +29,11 @@ public class ExpenseDetailActivity extends AppCompatActivity {
         tvRemark.setText(getString(R.string.detail_remark_label, intent.getStringExtra("remark")));
         tvDate.setText(getString(R.string.detail_date_label, intent.getStringExtra("date")));
 
+        // ✅ Fixed: Go back to MainActivity and tell it to open AddExpenseActivity
         btnAddNew.setOnClickListener(v -> {
-            startActivity(new Intent(this, AddExpenseActivity.class));
+            Intent backToMain = new Intent(this, MainActivity.class);
+            backToMain.putExtra("openAddExpense", true);
+            startActivity(backToMain);
             finish();
         });
 

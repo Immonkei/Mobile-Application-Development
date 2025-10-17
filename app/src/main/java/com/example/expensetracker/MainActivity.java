@@ -1,7 +1,6 @@
 package com.example.expensetracker;
 
-
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -17,9 +16,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvStatus;
     private Button btnAddExpense, btnViewDetail;
 
-    // Stored last expense
+    // Store the last expense
     private String amount, currency, category, remark, date;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +33,13 @@ public class MainActivity extends AppCompatActivity {
         tvStatus.setText(getString(R.string.last_expense_initial));
         btnViewDetail.setEnabled(false);
 
+        // Start AddExpenseActivity normally
         btnAddExpense.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
-            startActivityForResult(intent, ADD_EXPENSE_REQUEST); // per Lab 3 requirement
+            startActivityForResult(intent, ADD_EXPENSE_REQUEST);
         });
 
+        // View details of last expense
         btnViewDetail.setOnClickListener(v -> {
             Intent detail = new Intent(MainActivity.this, ExpenseDetailActivity.class);
             detail.putExtra("amount", amount);
@@ -48,12 +50,19 @@ public class MainActivity extends AppCompatActivity {
             startActivity(detail);
         });
 
+        
+        if (getIntent().getBooleanExtra("openAddExpense", false)) {
+            Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
+            startActivityForResult(intent, ADD_EXPENSE_REQUEST);
+        }
+
+        // Restore state if needed
         if (savedInstanceState != null) {
-            amount   = savedInstanceState.getString("amount");
+            amount = savedInstanceState.getString("amount");
             currency = savedInstanceState.getString("currency");
             category = savedInstanceState.getString("category");
-            remark   = savedInstanceState.getString("remark");
-            date     = savedInstanceState.getString("date");
+            remark = savedInstanceState.getString("remark");
+            date = savedInstanceState.getString("date");
             updateStatus();
         }
     }
@@ -62,11 +71,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_EXPENSE_REQUEST && resultCode == RESULT_OK && data != null) {
-            amount   = data.getStringExtra("amount");
+            amount = data.getStringExtra("amount");
             currency = data.getStringExtra("currency");
             category = data.getStringExtra("category");
-            remark   = data.getStringExtra("remark");
-            date     = data.getStringExtra("date");
+            remark = data.getStringExtra("remark");
+            date = data.getStringExtra("date");
             updateStatus();
         }
     }

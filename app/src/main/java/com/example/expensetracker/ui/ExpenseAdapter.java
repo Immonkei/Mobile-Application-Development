@@ -1,5 +1,3 @@
-// PASTE THIS ENTIRE CODE BLOCK INTO ExpenseAdapter.java
-
 package com.example.expensetracker.ui;
 
 import android.view.LayoutInflater;
@@ -18,13 +16,10 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     private final List<Expense> expenseList;
     private final OnItemClickListener clickListener;
 
-    // The interface that defines the click action
     public interface OnItemClickListener {
         void onItemClick(Expense expense);
     }
 
-    // THIS IS THE CORRECT CONSTRUCTOR that your ExpenseListFragment needs.
-    // It requires two arguments.
     public ExpenseAdapter(List<Expense> expenseList, OnItemClickListener clickListener) {
         this.expenseList = expenseList;
         this.clickListener = clickListener;
@@ -40,17 +35,12 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
 
     @Override
     public void onBindViewHolder(@NonNull ExpenseViewHolder holder, int position) {
-        Expense currentExpense = expenseList.get(position);
-
-        // Bind the data to the views
-        holder.tvCategory.setText(currentExpense.getCategory());
-        holder.tvRemark.setText(currentExpense.getRemark());
-        holder.tvDate.setText(currentExpense.getDate());
-        String amountText = String.format(Locale.getDefault(), "%s %.2f", currentExpense.getCurrency(), currentExpense.getAmount());
-        holder.tvAmountCurrency.setText(amountText);
-
-        // Apply the click listener to the item view
-        holder.bind(currentExpense, clickListener);
+        Expense current = expenseList.get(position);
+        holder.tvCategory.setText(current.getCategory());
+        holder.tvRemark.setText(current.getRemark());
+        holder.tvDate.setText(current.getDate());
+        holder.tvAmount.setText(String.format(Locale.getDefault(), "%s %.2f", current.getCurrency(), current.getAmount()));
+        holder.bind(current, clickListener);
     }
 
     @Override
@@ -58,22 +48,23 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         return expenseList.size();
     }
 
-    public static class ExpenseViewHolder extends RecyclerView.ViewHolder {
-        public final TextView tvCategory;
-        public final TextView tvRemark;
-        public final TextView tvAmountCurrency;
-        public final TextView tvDate;
+    // Return stable id derived from expense id
+    @Override
+    public long getItemId(int position) {
+        Expense e = expenseList.get(position);
+        return e == null ? super.getItemId(position) : e.getId();
+    }
 
-        public ExpenseViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvCategory = itemView.findViewById(R.id.tv_item_category);
-            tvRemark = itemView.findViewById(R.id.tv_item_remark);
-            tvAmountCurrency = itemView.findViewById(R.id.tv_item_amount); // Use tv_item_amount
-            tvDate = itemView.findViewById(R.id.tv_item_date);
+    static class ExpenseViewHolder extends RecyclerView.ViewHolder {
+        final TextView tvCategory, tvRemark, tvAmount, tvDate;
+        ExpenseViewHolder(@NonNull View v) {
+            super(v);
+            tvCategory = v.findViewById(R.id.tv_item_category);
+            tvRemark = v.findViewById(R.id.tv_item_remark);
+            tvAmount = v.findViewById(R.id.tv_item_amount);
+            tvDate = v.findViewById(R.id.tv_item_date);
         }
-
-        // Helper method to set the click listener on the item
-        public void bind(final Expense expense, final OnItemClickListener listener) {
+        void bind(final Expense expense, final OnItemClickListener listener) {
             itemView.setOnClickListener(v -> listener.onItemClick(expense));
         }
     }

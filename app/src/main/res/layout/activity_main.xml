@@ -1,26 +1,45 @@
-<!-- app/src/main/res/layout/activity_main.xml -->
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    THIS IS THE FIX (Part 1):Change the root layout from CoordinatorLayout to RelativeLayout.
+    RelativeLayout is the simplest and most reliable way to position
+    one view above another.
+-->
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/content_fragment_container"
-        android:paddingBottom="80dp"/>
-
+    <!--
+        The BottomNavigationView is defined first.
+        We give it an ID and align it to the bottom of the parent.
+    -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         style="@style/Widget.ExpenseTracker.BottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
         android:background="?attr/colorSurface"
-        app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav_menu" />
 
-    />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <!--
+        THIS IS THE FIX (Part 2):
+        The FrameLayout's height is set to match_parent, BUT
+        we add `android:layout_above="@+id/bottom_nav"`.
+        This is a clear, direct instruction: "Make this FrameLayout
+        take up all available space from the top of the screen down
+        to the top of the BottomNavigationView."
+
+        This gives the fragment container a fixed, correct size, allowing
+        the RecyclerView inside it to scroll properly.
+    -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_nav"
+        android:contentDescription="@string/content_fragment_container" />
+
+</RelativeLayout>

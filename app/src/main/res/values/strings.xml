@@ -13,7 +13,7 @@
     <!-- Home -->
     <string name="home_title">Expense Tracker</string>
     <string name="home_subtitle">Track your money with Flow and Focus</string>
-    <string name="message_no_expenses_found">No expenses found. Add one!</string>
+    <string name="no_expenses_yet">No expenses recorded yet.</string>
     <!-- Add form -->
     <string name="add_expense_title">Add Expense</string>
     <string name="amount">Amount</string>

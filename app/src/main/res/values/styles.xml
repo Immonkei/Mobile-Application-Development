@@ -1,0 +1,25 @@
+<resources>
+    <!-- Base rounded overlay (12dp) -->
+    <style name="ShapeAppearanceOverlay.Rounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <!-- Optional variants (if you use them anywhere) -->
+    <style name="ShapeAppearanceOverlay.Rounded.Small">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+    <style name="ShapeAppearanceOverlay.Rounded.Medium">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="ShapeAppearanceOverlay.Rounded.Large">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+    <style name="ShapeAppearanceOverlay.Rounded.Pill">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>

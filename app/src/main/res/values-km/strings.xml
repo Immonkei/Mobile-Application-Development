@@ -1,24 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">កម្មវិធីតាមដានចំណាយ</string>
-    <string name="manage_your_expense_title">MIN PHANITH</string>
-    <string name="last_expense_initial">ចំណាយចុងក្រោយរបស់ខ្ញុំគឺ 0</string>
-    <string name="last_expense_format">ចំណាយចុងក្រោយរបស់ខ្ញុំគឺ %1$s %2$s</string>
+    <!-- Navigation -->
+    <string name="nav_home">ទំព័រដើម</string>
+    <string name="nav_add_expense">បន្ថែមចំណាយ</string>
+    <string name="nav_expense_list">បញ្ជីចំណាយ</string>
 
-    <string name="btn_add_new_expense">ចំណាយថ្មី</string>
-    <string name="btn_view_detail_expense">មើលព័ត៌មានលម្អិត</string>
+    <!-- Content descriptions -->
+    <string name="content_fragment_container">កន្លែងបង្ហាញ Fragment</string>
+
+    <!-- Home -->
+    <string name="home_title">កម្មវិធីតាមដានចំណាយ</string>
+    <string name="home_subtitle">តាមដានការចំណាយរបស់ុនាក់ជាមួយ Flow and Focus</string>
+
+    <!-- Add form -->
+    <string name="add_expense_title">បន្ថែមចំណាយ</string>
+    <string name="amount">ចំណាយ</string>
+    <string name="currency">រូបិយប័ណ្ណ</string>
+    <string name="created_date">កាលបរិច្ឆេទ បង្កើត</string>
+    <string name="created_date_hint">ចុចដើម្បីជ្រើសកាលបរិច្ឆេទ</string>
+    <string name="category">ប្រភេទ</string>
+    <string name="remark">ចំណាំ</string>
+    <string name="save">រក្សាទុក</string>
+
+    <!-- Validation & messages (added) -->
+    <string name="error_required">ទាមទារ</string>
+    <string name="error_invalid_number">លេខមិនត្រឹមត្រូវ</string>
+    <string name="expense_saved">រក្សាទុកចំណាយរួចរាល់</string>
+
+    <!-- Detail -->
+    <string name="expense_detail_title">ព័ត៌មានលម្អិតអំពីចំណាយ</string>
+    <string name="expense_not_found">រកមិនឃើញចំណាយ</string>
+    <string name="fmt_amount_currency">%1$s %2$.2f</string>
+    <string name="fmt_date">កាលបរិច្ឆេទ៖ %1$s</string>
+    <string name="fmt_category">ប្រភេទ៖ %1$s</string>
+    <string name="fmt_remark">ចំណាំ៖ %1$s</string>
+
+    <!-- Buttons / hints -->
+    <string name="btn_add_new_expense">បន្ថែមចំណាយថ្មី</string>
+    <string name="hint_amount">បញ្ចូលចំនួន</string>
+    <string name="hint_remark">បញ្ចូលចំណាំ</string>
+    <string name="hint_created_date">ចុចដើម្បីជ្រើសកាលបរិច្ឆេទ</string>
     <string name="btn_add_expense">បន្ថែមចំណាយ</string>
-    <string name="btn_back_to_home">ត្រឡប់ទៅទំព័រដើម</string>
 
-    <string name="hint_amount">ចំនួន</string>
-    <string name="hint_remark">ចំណាំ</string>
-    <string name="hint_created_date">កាលបរិច្ឆេទបង្កើត</string>
-
-    <string name="detail_amount_label">ចំនួន៖ %1$s</string>
-    <string name="detail_currency_label">រូបិយប័ណ្ណ៖ %1$s</string>
-    <string name="detail_category_label">ប្រភេទ៖ %1$s</string>
-    <string name="detail_remark_label">ចំណាំ៖ %1$s</string>
-    <string name="detail_date_label">កាលបរិច្ឆេទ៖ %1$s</string>
-
-    <string name="error_amount_required">សូមបញ្ចូលចំនួនចំណាយ</string>
-    <string name="error_date_required">សូមជ្រើសកាលបរិច្ឆេទ</string>
+    <!-- Spinners -->
+    <string-array name="currency_array">
+        <item>USD</item>
+        <item>KHR</item>
+    </string-array>
+    <string-array name="category_array">
+        <item>កាហ្វេ</item>
+        <item>ម្ហូបថ្ងៃត្រង់</item>
+        <item>ការធ្វើដំណើរ</item>
+        <item>ផ្សារ</item>
+        <item>ស្នាក់</item>
+        <item>បញ្ចូលទឹកប្រាក់ទូរស័ព្ទ</item>
+        <item>អាហារពេលល្ងាច</item>
+        <item>ផ្សេងៗ</item>
+    </string-array>
 </resources>

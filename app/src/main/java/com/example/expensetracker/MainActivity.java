@@ -1,102 +1,64 @@
 package com.example.expensetracker;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
-
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import com.example.expensetracker.ui.AddExpenseFragment;
+import com.example.expensetracker.ui.ExpenseListFragment;
+import com.example.expensetracker.ui.HomeFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.expensetracker.ui.HomeFragment;
+import com.example.expensetracker.ui.AddExpenseFragment;
+import com.example.expensetracker.ui.ExpenseListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int ADD_EXPENSE_REQUEST = 100;
+    private static final String SELECTED_ITEM_KEY = "selected_item";
+    private int selectedItemId = R.id.nav_home;
 
-    private TextView tvStatus;
-    private Button btnAddExpense, btnViewDetail;
-
-    // Store the last expense
-    private String amount, currency, category, remark, date;
-
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Apply existing theme from Lab 3
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tvStatus = findViewById(R.id.tvStatus);
-        btnAddExpense = findViewById(R.id.btnAddExpense);
-        btnViewDetail = findViewById(R.id.btnViewDetail);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
 
-        // Initial UI
-        tvStatus.setText(getString(R.string.last_expense_initial));
-        btnViewDetail.setEnabled(false);
-
-        // Start AddExpenseActivity normally
-        btnAddExpense.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
-            startActivityForResult(intent, ADD_EXPENSE_REQUEST);
+        bottomNav.setOnItemSelectedListener(item -> {
+            selectedItemId = item.getItemId();
+            Fragment fragment;
+            if (item.getItemId() == R.id.nav_home) {
+                fragment = new HomeFragment();
+            } else if (item.getItemId() == R.id.nav_add) {
+                fragment = new AddExpenseFragment();
+            } else {
+                fragment = new ExpenseListFragment();
+            }
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+            return true;
         });
 
-        // View details of last expense
-        btnViewDetail.setOnClickListener(v -> {
-            Intent detail = new Intent(MainActivity.this, ExpenseDetailActivity.class);
-            detail.putExtra("amount", amount);
-            detail.putExtra("currency", currency);
-            detail.putExtra("category", category);
-            detail.putExtra("remark", remark);
-            detail.putExtra("date", date);
-            startActivity(detail);
-        });
-
-        
-        if (getIntent().getBooleanExtra("openAddExpense", false)) {
-            Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
-            startActivityForResult(intent, ADD_EXPENSE_REQUEST);
-        }
-
-        // Restore state if needed
-        if (savedInstanceState != null) {
-            amount = savedInstanceState.getString("amount");
-            currency = savedInstanceState.getString("currency");
-            category = savedInstanceState.getString("category");
-            remark = savedInstanceState.getString("remark");
-            date = savedInstanceState.getString("date");
-            updateStatus();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ADD_EXPENSE_REQUEST && resultCode == RESULT_OK && data != null) {
-            amount = data.getStringExtra("amount");
-            currency = data.getStringExtra("currency");
-            category = data.getStringExtra("category");
-            remark = data.getStringExtra("remark");
-            date = data.getStringExtra("date");
-            updateStatus();
-        }
-    }
-
-    private void updateStatus() {
-        if (amount != null && currency != null) {
-            tvStatus.setText(getString(R.string.last_expense_format, amount, currency));
-            btnViewDetail.setEnabled(true);
+        if (savedInstanceState == null) {
+            bottomNav.setSelectedItemId(R.id.nav_home); // Home loads by default
         } else {
-            tvStatus.setText(getString(R.string.last_expense_initial));
-            btnViewDetail.setEnabled(false);
+            selectedItemId = savedInstanceState.getInt(SELECTED_ITEM_KEY, R.id.nav_home);
+            bottomNav.setSelectedItemId(selectedItemId);
         }
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("amount", amount);
-        outState.putString("currency", currency);
-        outState.putString("category", category);
-        outState.putString("remark", remark);
-        outState.putString("date", date);
+        outState.putInt(SELECTED_ITEM_KEY, selectedItemId);
     }
 }

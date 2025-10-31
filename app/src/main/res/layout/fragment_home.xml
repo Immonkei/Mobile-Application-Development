@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    tools:context=".ui.HomeFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:gravity="center">
+
+            <!-- App Logo -->
+            <ImageView
+                android:id="@+id/iv_home_logo"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="24dp"
+                android:src="@drawable/logo_expense"
+                android:contentDescription="@string/app_name"
+                android:transitionName="app_logo"
+                app:tint="?attr/colorPrimary" />
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tv_home_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_title"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:id="@+id/tv_home_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_subtitle"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:gravity="center"
+                android:alpha="0.8"
+                android:layout_marginBottom="32dp" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="80dp"
+                android:layout_height="2dp"
+                android:background="?attr/colorPrimary"
+                android:alpha="0.7"
+                android:layout_marginBottom="32dp" />
+
+            <!-- Motivational quote -->
+            <TextView
+                android:id="@+id/tv_home_quote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="“Track your spending, grow your savings.”"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textStyle="italic"
+                android:textColor="?attr/colorOnSurface"
+                android:gravity="center"
+                android:alpha="0.8"
+                android:layout_marginBottom="32dp" />
+
+            <!-- Footer text -->
+            <TextView
+                android:id="@+id/tv_home_footer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Expense Tracker v1.0"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:gravity="center"
+                android:alpha="0.7" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

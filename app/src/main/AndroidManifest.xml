@@ -14,6 +14,9 @@
             android:name=".AddExpenseActivity"
             android:exported="false" />
         <activity
+            android:name=".detail.DetailExpenseActivity"
+            android:label="@string/expense_detail_title" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

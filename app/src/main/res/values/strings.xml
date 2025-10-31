@@ -1,29 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App -->
     <string name="app_name">Expense Tracker</string>
-    <string name="manage_your_expense_title">MIN PHANITH</string>
-    <string name="last_expense_initial">My last expense was 0</string>
-    <string name="last_expense_format">My last expense was %1$s %2$s</string>
 
-    <!-- Buttons -->
-    <string name="btn_add_new_expense"> New Expense</string>
-    <string name="btn_view_detail_expense">View Detail Expense</string>
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_add_expense">Add Expense</string>
+    <string name="nav_expense_list">Expense List</string>
+
+    <!-- Content descriptions -->
+    <string name="content_fragment_container">Fragment container</string>
+
+    <!-- Home -->
+    <string name="home_title">Expense Tracker</string>
+    <string name="home_subtitle">Track your money with Flow and Focus</string>
+    <string name="message_no_expenses_found">No expenses found. Add one!</string>
+    <!-- Add form -->
+    <string name="add_expense_title">Add Expense</string>
+    <string name="amount">Amount</string>
+    <string name="currency">Currency</string>
+    <string name="created_date">Created Date</string>
+    <string name="created_date_hint">Tap to pick date</string>
+    <string name="category">Category</string>
+    <string name="remark">Remark</string>
+    <string name="save">Save</string>
+
+    <!-- Validation & messages -->
+    <string name="error_required">Required</string>
+    <string name="error_invalid_number">Invalid number</string>
+    <string name="expense_saved">Expense saved</string>
+
+    <!-- Detail -->
+    <string name="expense_detail_title">Expense Detail</string>
+    <string name="expense_not_found">Expense not found</string>
+    <string name="fmt_amount_currency">%1$.2f %2$s</string>
+    <string name="fmt_date">Date: %1$s</string>
+    <string name="fmt_category">Category: %1$s</string>
+    <string name="fmt_remark">Remark: %1$s</string>
+
+    <string name="btn_add_new_expense">Add New Expense</string>
+    <string name="hint_amount">Enter amount</string>
+    <string name="hint_remark">Enter remark</string>
+    <string name="hint_created_date">Tap to pick date</string>
     <string name="btn_add_expense">Add Expense</string>
-    <string name="btn_back_to_home">Back to Home</string>
 
-    <!-- Form hints -->
-    <string name="hint_amount">Amount</string>
-    <string name="hint_remark">Remark</string>
-    <string name="hint_created_date">Created Date</string>
+    <!-- Spinners / dropdown arrays -->
+    <string-array name="currency_array">
+        <item>USD</item>
+        <item>KHR</item>
+    </string-array>
 
-    <!-- Detail labels -->
-    <string name="detail_amount_label">Amount: %1$s</string>
-    <string name="detail_currency_label">Currency: %1$s</string>
-    <string name="detail_category_label">Category: %1$s</string>
-    <string name="detail_remark_label">Remark: %1$s</string>
-    <string name="detail_date_label">Created Date: %1$s</string>
-
-    <!-- Errors -->
-    <string name="error_amount_required">Amount is required</string>
-    <string name="error_date_required">Created date is required</string>
+    <string-array name="category_array">
+        <item>Coffee</item>
+        <item>Lunch</item>
+        <item>Transport</item>
+        <item>Groceries</item>
+        <item>Snacks</item>
+        <item>Phone Top-up</item>
+        <item>Dinner</item>
+        <item>Other</item>
+    </string-array>
 </resources>

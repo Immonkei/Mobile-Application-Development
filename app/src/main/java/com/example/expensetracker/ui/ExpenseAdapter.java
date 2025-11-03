@@ -9,63 +9,55 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.expensetracker.R;
 import com.example.expensetracker.model.Expense;
 import java.util.List;
-import java.util.Locale;
 
-public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder> {
+public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.VH> {
 
-    private final List<Expense> expenseList;
-    private final OnItemClickListener clickListener;
+    private final List<Expense> list;
+    private final OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(Expense expense);
+        void onItemClick(Expense e);
     }
 
-    public ExpenseAdapter(List<Expense> expenseList, OnItemClickListener clickListener) {
-        this.expenseList = expenseList;
-        this.clickListener = clickListener;
+    public ExpenseAdapter(List<Expense> list, OnItemClickListener listener) {
+        this.list = list;
+        this.listener = listener;
     }
 
-    @NonNull
-    @Override
-    public ExpenseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_expense, parent, false);
-        return new ExpenseViewHolder(itemView);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ExpenseViewHolder holder, int position) {
-        Expense current = expenseList.get(position);
-        holder.tvCategory.setText(current.getCategory());
-        holder.tvRemark.setText(current.getRemark());
-        holder.tvDate.setText(current.getDate());
-        holder.tvAmount.setText(String.format(Locale.getDefault(), "%s %.2f", current.getCurrency(), current.getAmount()));
-        holder.bind(current, clickListener);
+    @NonNull @Override
+    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new VH(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_expense, parent, false));
     }
 
     @Override
-    public int getItemCount() {
-        return expenseList.size();
+    public void onBindViewHolder(@NonNull VH holder, int position) {
+        Expense e = list.get(position);
+
+        // Use getters (Expense fields are private)
+        String category = e.getCategory() != null ? e.getCategory() : "—";
+        String currency = e.getCurrency() != null ? e.getCurrency() : "";
+        double amountVal = e.getAmount();
+        String remark = e.getRemark() != null ? e.getRemark() : "";
+
+        holder.tvCategory.setText(category);
+        holder.tvAmount.setText(String.format("%s %.2f", currency, amountVal));
+        holder.tvRemark.setText(remark);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onItemClick(e);
+        });
     }
 
-    // Return stable id derived from expense id
-    @Override
-    public long getItemId(int position) {
-        Expense e = expenseList.get(position);
-        return e == null ? super.getItemId(position) : e.getId();
-    }
+    @Override public int getItemCount() { return list == null ? 0 : list.size(); }
 
-    static class ExpenseViewHolder extends RecyclerView.ViewHolder {
-        final TextView tvCategory, tvRemark, tvAmount, tvDate;
-        ExpenseViewHolder(@NonNull View v) {
-            super(v);
-            tvCategory = v.findViewById(R.id.tv_item_category);
-            tvRemark = v.findViewById(R.id.tv_item_remark);
-            tvAmount = v.findViewById(R.id.tv_item_amount);
-            tvDate = v.findViewById(R.id.tv_item_date);
-        }
-        void bind(final Expense expense, final OnItemClickListener listener) {
-            itemView.setOnClickListener(v -> listener.onItemClick(expense));
+    static class VH extends RecyclerView.ViewHolder {
+        TextView tvCategory, tvAmount, tvRemark;
+        VH(@NonNull View itemView) {
+            super(itemView);
+            tvCategory = itemView.findViewById(R.id.tv_category);
+            tvAmount = itemView.findViewById(R.id.tv_amount);
+            tvRemark = itemView.findViewById(R.id.tv_remark);
         }
     }
 }

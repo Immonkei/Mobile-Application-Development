@@ -43,6 +43,11 @@
     <string name="hint_created_date">Tap to pick date</string>
     <string name="btn_add_expense">Add Expense</string>
 
+    <string name="empty_content_desc">Empty</string>
+    <string name="empty_title">No expenses yet</string>
+    <string name="empty_sub">Add an expense to get started.</string>
+
+
     <!-- Spinners / dropdown arrays -->
     <string-array name="currency_array">
         <item>USD</item>

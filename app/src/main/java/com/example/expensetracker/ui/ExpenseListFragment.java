@@ -1,11 +1,14 @@
 package com.example.expensetracker.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -13,67 +16,69 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.expensetracker.R;
-import com.example.expensetracker.data.ExpenseData;
+import com.example.expensetracker.data.ApiConfig;
+import com.example.expensetracker.data.ExpenseApi;
+import com.example.expensetracker.data.RetrofitClient;
 import com.example.expensetracker.model.Expense;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ExpenseListFragment extends Fragment {
 
-    private RecyclerView rv;
-    private LinearLayout emptyContainer;
+    private RecyclerView recycler;
+    private ProgressBar progressBar;
     private ExpenseAdapter adapter;
+    private List<Expense> expenses = new ArrayList<>();
 
-    @Nullable
-    @Override
+    @Nullable @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_expense_list, container, false);
-
-        rv = root.findViewById(R.id.rv_expenses);
-        emptyContainer = root.findViewById(R.id.empty_container);
-
-        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-        rv.setHasFixedSize(true);
-
-        // If RecyclerView is inside any scrolling parent, disabling nested scrolling often helps.
-        // Keep false to avoid parent stealing scroll touches.
-        rv.setNestedScrollingEnabled(false);
-
-        // Use the live data list from ExpenseData
-        List<Expense> data = ExpenseData.getExpenses();
-
-        adapter = new ExpenseAdapter(data, expense -> {
-            // open detail fragment
-            ExpenseDetailFragment detail = ExpenseDetailFragment.newInstance(expense.getId());
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, detail)
-                    .addToBackStack(null)
-                    .commit();
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_expense_list, container, false);
+        recycler = view.findViewById(R.id.recycler_expenses);
+        progressBar = view.findViewById(R.id.progress_bar);
+        recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new ExpenseAdapter(expenses, e -> {
+            Intent i = new Intent(getActivity(), com.example.expensetracker.detail.DetailExpenseActivity.class);
+            i.putExtra(com.example.expensetracker.detail.DetailExpenseActivity.EXTRA_EXPENSE_ID, e.getId());
+            startActivity(i);
         });
+        recycler.setAdapter(adapter);
 
-        // Let adapter use stable IDs for smoother updates (getItemId implemented).
-        adapter.setHasStableIds(true);
-
-        rv.setAdapter(adapter);
-
-        updateEmptyState();
-
-        return root;
+        loadExpenses();
+        return view;
     }
 
-    private void updateEmptyState() {
-        boolean isEmpty = ExpenseData.getExpenses() == null || ExpenseData.getExpenses().isEmpty();
-        emptyContainer.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-        rv.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-    }
+    public void reloadExpenses() { loadExpenses(); }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // refresh content if expenses changed
-        if (adapter != null) adapter.notifyDataSetChanged();
-        updateEmptyState();
+    private void loadExpenses() {
+        progressBar.setVisibility(View.VISIBLE);
+
+        ExpenseApi api = RetrofitClient.getClient().create(ExpenseApi.class);
+        api.getExpenses(ApiConfig.DB_NAME).enqueue(new Callback<List<Expense>>() {
+            @Override
+            public void onResponse(Call<List<Expense>> call, Response<List<Expense>> response) {
+                progressBar.setVisibility(View.GONE);
+                if (response.isSuccessful() && response.body() != null) {
+                    expenses.clear();
+                    expenses.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getContext(), "Failed to load expenses", Toast.LENGTH_SHORT).show();
+                    Log.e("ExpenseList", "Response error code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Expense>> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("ExpenseList", "Failure", t);
+            }
+        });
     }
 }

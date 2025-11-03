@@ -36,6 +36,10 @@
     <string name="fmt_category">ប្រភេទ៖ %1$s</string>
     <string name="fmt_remark">ចំណាំ៖ %1$s</string>
 
+    <string name="empty_content_desc">ទទេ</string>
+    <string name="empty_title">មិនទាន់មានការចំណាយនៅឡើយទេ</string>
+    <string name="empty_sub">បន្ថែមការចំណាយមួយ ដើម្បីចាប់ផ្តើម។</string>
+
     <!-- Buttons / hints -->
     <string name="btn_add_new_expense">បន្ថែមចំណាយថ្មី</string>
     <string name="hint_amount">បញ្ចូលចំនួន</string>

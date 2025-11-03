@@ -1,50 +1,70 @@
 package com.example.expensetracker.model;
 
-public class Expense {
-    private final int id;
-    private final double amount;
-    private final String currency;
-    private final String date; // <-- The private field for the date
-    private final String category;
-    private final String remark;
+import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
-    // Your constructor is likely here
-    public Expense(int id, double amount, String currency, String date, String category, String remark) {
+public class Expense implements Serializable {
+
+    @SerializedName("id")
+    private String id;                // server uses GUID
+
+    @SerializedName("amount")
+    private double amount;
+
+    @SerializedName("currency")
+    private String currency;
+
+    // Use 'category' and 'remark' to match server naming
+    @SerializedName("category")
+    private String category;
+
+    @SerializedName("remark")
+    private String remark;
+
+    @SerializedName("createdBy")
+    private String createdBy;
+
+    // ISO-8601 date/time as string (e.g. 2025-11-03T14:23:00Z)
+    @SerializedName("createdDate")
+    private String createdDate;
+
+    // default constructor (Gson)
+    public Expense() { }
+
+    public Expense(String id, double amount, String currency, String category, String remark, String createdBy, String createdDate) {
         this.id = id;
         this.amount = amount;
         this.currency = currency;
-        this.date = date;
         this.category = category;
         this.remark = remark;
+        this.createdBy = createdBy;
+        this.createdDate = createdDate;
     }
 
-    // --- You probably have these getters already ---
-    public int getId() {
-        return id;
+    // convenience constructor for creating new expense (id & createdDate may be generated client-side)
+    public Expense(double amount, String currency, String category, String remark, String createdBy, String createdDate) {
+        this(null, amount, currency, category, remark, createdBy, createdDate);
     }
 
-    public double getAmount() {
-        return amount;
-    }
+    // getters & setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getCurrency() {
-        return currency;
-    }
+    public double getAmount() { return amount; }
+    public void setAmount(double amount) { this.amount = amount; }
 
-    public String getCategory() {
-        return category;
-    }
+    public String getCurrency() { return currency; }
+    public void setCurrency(String currency) { this.currency = currency; }
 
-    public String getRemark() {
-        return remark;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-    // =======================================================
-    // ========== THIS IS THE FIX: ADD THIS METHOD ===========
-    // =======================================================
-    public String getDate() {
-        return date;
-    }
-    // =======================================================
+    public String getRemark() { return remark; }
+    public void setRemark(String remark) { this.remark = remark; }
 
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+
+    public String getCreatedDate() { return createdDate; }
+    public void setCreatedDate(String createdDate) { this.createdDate = createdDate; }
 }

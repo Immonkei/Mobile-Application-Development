@@ -2,6 +2,7 @@ package com.example.expensetracker.ui;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,22 +16,31 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.expensetracker.R;
-import com.example.expensetracker.data.ExpenseData;
-import com.example.expensetracker.ui.ExpenseListFragment;
+import com.example.expensetracker.data.ApiConfig;
+import com.example.expensetracker.data.ExpenseApi;
+import com.example.expensetracker.data.RetrofitClient;
 import com.example.expensetracker.model.Expense;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 
+import java.time.Instant;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddExpenseFragment extends Fragment {
 
     private EditText etAmount, etDate, etRemark;
     private AutoCompleteTextView actvCurrency, actvCategory;
     private MaterialButton btnSave;
+
+    public AddExpenseFragment() {}
 
     @Nullable
     @Override
@@ -39,11 +49,8 @@ public class AddExpenseFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_add_expense, container, false);
 
-        // Optional toolbar back behaviour (if desired)
         MaterialToolbar toolbar = root.findViewById(R.id.toolbar_add);
         if (toolbar != null) {
-            // Provide a back icon if you have one; otherwise skip
-            // toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
             toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
         }
 
@@ -54,7 +61,6 @@ public class AddExpenseFragment extends Fragment {
         actvCategory = root.findViewById(R.id.actv_category);
         btnSave      = root.findViewById(R.id.btn_save);
 
-        // Dropdown adapters (use our small list item layout)
         ArrayAdapter<String> currencyAdapter = new ArrayAdapter<>(
                 requireContext(),
                 R.layout.list_item_dropdown,
@@ -71,7 +77,7 @@ public class AddExpenseFragment extends Fragment {
         actvCategory.setAdapter(categoryAdapter);
         actvCategory.setText("", false);
 
-        // Date picker: make icon, field and whole TextInputLayout trigger it
+        // Date picker
         TextInputLayout tilDate = root.findViewById(R.id.til_date);
         View.OnClickListener showDatePicker = v -> {
             Calendar c = Calendar.getInstance();
@@ -90,66 +96,18 @@ public class AddExpenseFragment extends Fragment {
         };
 
         if (tilDate != null) tilDate.setEndIconOnClickListener(showDatePicker);
-        // allow tapping the whole layout (ripple) to open too
         if (tilDate != null) tilDate.setOnClickListener(showDatePicker);
         etDate.setOnClickListener(showDatePicker);
 
-        // simple validation watcher via focus changes and text change (lightweight)
         View.OnFocusChangeListener focusWatcher = (v, hasFocus) -> validate();
         etAmount.setOnFocusChangeListener(focusWatcher);
         etDate.setOnFocusChangeListener(focusWatcher);
         actvCurrency.setOnFocusChangeListener(focusWatcher);
         actvCategory.setOnFocusChangeListener(focusWatcher);
 
-        // Save action: validate, create Expense, add to ExpenseData, navigate to list
-        btnSave.setOnClickListener(v -> {
-            if (!validate()) return;
+        btnSave.setOnClickListener(v -> saveExpense());
 
-            String amountStr = etAmount.getText() != null ? etAmount.getText().toString().trim() : "";
-            String currency = actvCurrency.getText() != null ? actvCurrency.getText().toString().trim() : "";
-            String date = etDate.getText() != null ? etDate.getText().toString().trim() : "";
-            String category = actvCategory.getText() != null ? actvCategory.getText().toString().trim() : "";
-            String remark = etRemark.getText() != null ? etRemark.getText().toString().trim() : "";
-
-            double amount;
-            try {
-                amount = Double.parseDouble(amountStr);
-            } catch (NumberFormatException ex) {
-                etAmount.setError(getString(R.string.error_invalid_number));
-                etAmount.requestFocus();
-                return;
-            }
-
-            // compute next id (simple in-memory)
-            // THIS IS THE CORRECTED LINE
-            List<Expense> all = ExpenseData.getExpenses();
-            int nextId = 1;
-            for (Expense e : all) {
-                if (e.getId() >= nextId) nextId = e.getId() + 1;
-            }
-
-            Expense newExp = new Expense(nextId, amount, currency, date, category, remark);
-            ExpenseData.addExpense(newExp);
-
-            Toast.makeText(requireContext(), getString(R.string.expense_saved), Toast.LENGTH_SHORT).show();
-
-            // clear fields
-            etAmount.setText("");
-            actvCurrency.setText("", false);
-            etDate.setText("");
-            actvCategory.setText("", false);
-            etRemark.setText("");
-
-            // show list fragment so user sees the new item
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new ExpenseListFragment())
-                    .addToBackStack(null)
-                    .commit();
-        });
-
-        // initial validate
         validate();
-
         return root;
     }
 
@@ -163,5 +121,64 @@ public class AddExpenseFragment extends Fragment {
         btnSave.setEnabled(enabled);
         btnSave.setAlpha(enabled ? 1f : 0.5f);
         return enabled;
+    }
+
+    private void saveExpense() {
+        String amountStr = etAmount.getText() != null ? etAmount.getText().toString().trim() : "";
+        String currency = actvCurrency.getText() != null ? actvCurrency.getText().toString().trim() : "";
+        String date = etDate.getText() != null ? etDate.getText().toString().trim() : "";
+        String category = actvCategory.getText() != null ? actvCategory.getText().toString().trim() : "";
+        String remark = etRemark.getText() != null ? etRemark.getText().toString().trim() : "";
+
+        double amount;
+        try {
+            amount = Double.parseDouble(amountStr);
+        } catch (NumberFormatException ex) {
+            etAmount.setError(getString(R.string.error_invalid_number));
+            etAmount.requestFocus();
+            return;
+        }
+
+        // Build createdDate as ISO-8601 (UTC)
+        String createdDate = Instant.now().toString(); // requires API 26+
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                : "anonymous";
+
+        // Create an ID client-side (lab requires using UUID)
+        String id = UUID.randomUUID().toString();
+
+        Expense newExpense = new Expense(id, amount, currency, category, remark, uid, createdDate);
+
+        // Call Retrofit to add
+        ExpenseApi api = RetrofitClient.getClient().create(ExpenseApi.class);
+        Call<Expense> call = api.addExpense(ApiConfig.DB_NAME, newExpense);
+
+        btnSave.setEnabled(false);
+        call.enqueue(new Callback<Expense>() {
+            @Override
+            public void onResponse(Call<Expense> call, Response<Expense> response) {
+                btnSave.setEnabled(true);
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(), getString(R.string.expense_saved), Toast.LENGTH_SHORT).show();
+                    // show list fragment
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new ExpenseListFragment())
+                            .addToBackStack(null)
+                            .commit();
+                } else {
+                    Toast.makeText(requireContext(), "Failed to save: " + response.code(), Toast.LENGTH_LONG).show();
+                    Log.e("AddExpense", "Response error: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Expense> call, Throwable t) {
+                btnSave.setEnabled(true);
+                Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("AddExpense", "onFailure", t);
+            }
+        });
     }
 }

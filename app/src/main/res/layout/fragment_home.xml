@@ -20,6 +20,17 @@
             android:padding="32dp"
             android:gravity="center">
 
+            <TextView
+                android:id="@+id/tv_user_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome!"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center" />
             <!-- App Logo -->
             <ImageView
                 android:id="@+id/iv_home_logo"
@@ -87,6 +98,18 @@
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:gravity="center"
                 android:alpha="0.7" />
+            <Button
+                android:id="@+id/btn_sign_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign Out"
+                android:backgroundTint="?attr/colorPrimary"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="24dp"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:layout_gravity="center" />
 
         </LinearLayout>
     </ScrollView>

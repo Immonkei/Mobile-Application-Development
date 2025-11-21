@@ -1,33 +1,27 @@
 package com.example.expensetracker;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import com.example.expensetracker.ui.AddExpenseFragment;
-import com.example.expensetracker.ui.ExpenseListFragment;
-import com.example.expensetracker.ui.HomeFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.util.Log;
 
-
-import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.example.expensetracker.ui.HomeFragment;
+
 import com.example.expensetracker.ui.AddExpenseFragment;
 import com.example.expensetracker.ui.ExpenseListFragment;
+import com.example.expensetracker.ui.HomeFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MAIN_DEBUG";
     private static final String SELECTED_ITEM_KEY = "selected_item";
     private int selectedItemId = R.id.nav_home;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Apply existing theme from Lab 3
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main); // must contain fragment_container
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
 
@@ -41,19 +35,31 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 fragment = new ExpenseListFragment();
             }
+            Log.d(TAG, "Switching fragment to " + fragment.getClass().getSimpleName());
             getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .replace(R.id.fragment_container, fragment)
                     .commit();
             return true;
         });
 
         if (savedInstanceState == null) {
-            bottomNav.setSelectedItemId(R.id.nav_home); // Home loads by default
+            bottomNav.setSelectedItemId(R.id.nav_home);
         } else {
             selectedItemId = savedInstanceState.getInt(SELECTED_ITEM_KEY, R.id.nav_home);
             bottomNav.setSelectedItemId(selectedItemId);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // If there are fragment entries on back stack, pop one (Detail -> List works)
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override

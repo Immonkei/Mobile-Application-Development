@@ -8,30 +8,36 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ExpenseTracker">
 
+        <!-- LoginActivity is the only launcher activity -->
+        <activity
+            android:name=".auth.LoginActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Signup screen -->
         <activity
             android:name=".auth.SignupActivity"
             android:exported="false" />
-        <activity
-            android:name=".auth.LoginActivity"
-            android:exported="true">
-            <!-- Make LoginActivity the launcher screen -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
+        <!-- DetailExpense screen -->
+        <!-- THE "android:label" ATTRIBUTE HAS BEEN REMOVED FROM HERE -->
         <activity
             android:name=".detail.DetailExpenseActivity"
-            android:label="@string/expense_detail_title" />
+            android:exported="false" />
+
+        <!-- MainActivity (your main UI after login) -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

@@ -47,6 +47,8 @@
     <string name="hint_created_date">ចុចដើម្បីជ្រើសកាលបរិច្ឆេទ</string>
     <string name="btn_add_expense">បន្ថែមចំណាយ</string>
 
+    <string name="failed_to_load_expense">មិនអាចផ្ទុកការចំណាយបានទេ</string>
+    <string name="network_error_colon">បញ្ហាបណ្ដាញ៖</string>
     <!-- Spinners -->
     <string-array name="currency_array">
         <item>USD</item>

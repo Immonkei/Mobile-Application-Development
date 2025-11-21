@@ -1,6 +1,5 @@
 package com.example.expensetracker.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,55 +29,92 @@ import retrofit2.Response;
 
 public class ExpenseListFragment extends Fragment {
 
+    private static final String TAG = "ExpenseList";
     private RecyclerView recycler;
     private ProgressBar progressBar;
     private ExpenseAdapter adapter;
-    private List<Expense> expenses = new ArrayList<>();
+    private final List<Expense> expenses = new ArrayList<>();
+    private boolean firstLoadDone = false;
+    private static long lastClickTime = 0;
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_expense_list, container, false);
-        recycler = view.findViewById(R.id.recycler_expenses);
-        progressBar = view.findViewById(R.id.progress_bar);
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_expense_list, container, false);
+        recycler = v.findViewById(R.id.recycler_expenses);
+        progressBar = v.findViewById(R.id.progress_bar);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+
         adapter = new ExpenseAdapter(expenses, e -> {
-            Intent i = new Intent(getActivity(), com.example.expensetracker.detail.DetailExpenseActivity.class);
-            i.putExtra(com.example.expensetracker.detail.DetailExpenseActivity.EXTRA_EXPENSE_ID, e.getId());
-            startActivity(i);
+            long now = System.currentTimeMillis();
+            if (now - lastClickTime < 700) return; // debounce
+            lastClickTime = now;
+
+            // open detail as fragment, add to back stack
+            String id = e.getId() != null ? String.valueOf(e.getId()) : null;
+            if (id == null) return;
+
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(
+                            android.R.anim.slide_in_left,
+                            android.R.anim.slide_out_right,
+                            android.R.anim.slide_in_left,
+                            android.R.anim.slide_out_right
+                    )
+                    .replace(R.id.fragment_container, ExpenseDetailFragment.newInstance(id))
+                    .addToBackStack(null)
+                    .commit();
         });
+
         recycler.setAdapter(adapter);
 
-        loadExpenses();
-        return view;
-    }
+        if (!firstLoadDone) {
+            loadExpenses();
+            firstLoadDone = true;
+        }
 
-    public void reloadExpenses() { loadExpenses(); }
+        return v;
+    }
 
     private void loadExpenses() {
         progressBar.setVisibility(View.VISIBLE);
-
         ExpenseApi api = RetrofitClient.getClient().create(ExpenseApi.class);
         api.getExpenses(ApiConfig.DB_NAME).enqueue(new Callback<List<Expense>>() {
             @Override
-            public void onResponse(Call<List<Expense>> call, Response<List<Expense>> response) {
+            public void onResponse(@NonNull Call<List<Expense>> call,
+                                   @NonNull Response<List<Expense>> response) {
                 progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     expenses.clear();
                     expenses.addAll(response.body());
                     adapter.notifyDataSetChanged();
+                    Log.d(TAG, "Loaded " + expenses.size() + " expenses");
                 } else {
                     Toast.makeText(getContext(), "Failed to load expenses", Toast.LENGTH_SHORT).show();
-                    Log.e("ExpenseList", "Response error code: " + response.code());
+                    Log.e(TAG, "Response code: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Expense>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Expense>> call, @NonNull Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e("ExpenseList", "Failure", t);
+                Log.e(TAG, "Failure", t);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // stable UI — don't force reload here
+        if (recycler != null) {
+            recycler.clearFocus();
+            recycler.stopScroll();
+        }
+        Log.d(TAG, "onResume() — stable (no reload)");
     }
 }

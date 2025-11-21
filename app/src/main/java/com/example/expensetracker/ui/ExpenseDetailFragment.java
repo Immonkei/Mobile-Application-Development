@@ -26,6 +26,7 @@ import retrofit2.Response;
 public class ExpenseDetailFragment extends Fragment {
 
     private static final String ARG_EXPENSE_ID = "expense_id";
+    private static final String TAG = "DETAIL_FRAGMENT";
 
     public static ExpenseDetailFragment newInstance(String expenseId) {
         ExpenseDetailFragment f = new ExpenseDetailFragment();
@@ -47,10 +48,16 @@ public class ExpenseDetailFragment extends Fragment {
 
         MaterialToolbar toolbar = root.findViewById(R.id.toolbar_detail);
         if (toolbar != null) {
-            if (toolbar.getNavigationIcon() == null) {
-                toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-            }
-            toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
+            // ensure back arrow exists
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+            toolbar.setNavigationOnClickListener(v -> {
+                // pop the detail fragment (return to list)
+                if (getParentFragmentManager().getBackStackEntryCount() > 0) {
+                    getParentFragmentManager().popBackStack();
+                } else {
+                    requireActivity().onBackPressed();
+                }
+            });
         }
 
         tvAmountCurrency = root.findViewById(R.id.tv_detail_amount_currency);
@@ -61,7 +68,11 @@ public class ExpenseDetailFragment extends Fragment {
         String expenseId = getArguments() != null ? getArguments().getString(ARG_EXPENSE_ID, null) : null;
         if (expenseId == null) {
             Toast.makeText(requireContext(), R.string.expense_not_found, Toast.LENGTH_SHORT).show();
-            requireActivity().onBackPressed();
+            if (getParentFragmentManager().getBackStackEntryCount() > 0) {
+                getParentFragmentManager().popBackStack();
+            } else {
+                requireActivity().onBackPressed();
+            }
             return root;
         }
 
@@ -70,30 +81,42 @@ public class ExpenseDetailFragment extends Fragment {
     }
 
     private void loadExpense(String id) {
+        Log.d(TAG, "loadExpense id=" + id);
         ExpenseApi api = RetrofitClient.getClient().create(ExpenseApi.class);
         api.getExpense(ApiConfig.DB_NAME, id).enqueue(new Callback<Expense>() {
             @Override
-            public void onResponse(Call<Expense> call, Response<Expense> response) {
+            public void onResponse(@NonNull Call<Expense> call,
+                                   @NonNull Response<Expense> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     populateUi(response.body());
                 } else {
                     Toast.makeText(requireContext(), "Failed to load expense", Toast.LENGTH_SHORT).show();
-                    Log.e("ExpenseDetail", "Response code: " + response.code());
-                    requireActivity().onBackPressed();
+                    Log.e(TAG, "Response code: " + response.code());
+                    if (getParentFragmentManager().getBackStackEntryCount() > 0) {
+                        getParentFragmentManager().popBackStack();
+                    } else {
+                        requireActivity().onBackPressed();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<Expense> call, Throwable t) {
+            public void onFailure(@NonNull Call<Expense> call, @NonNull Throwable t) {
                 Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.e("ExpenseDetail", "Failure", t);
-                requireActivity().onBackPressed();
+                Log.e(TAG, "Failure", t);
+                if (getParentFragmentManager().getBackStackEntryCount() > 0) {
+                    getParentFragmentManager().popBackStack();
+                } else {
+                    requireActivity().onBackPressed();
+                }
             }
         });
     }
 
     private void populateUi(@NonNull Expense expense) {
-        String amountText = String.format("%s %.2f", expense.getCurrency() != null ? expense.getCurrency() : "", expense.getAmount());
+        String amountText = String.format("%s %.2f",
+                expense.getCurrency() != null ? expense.getCurrency() : "",
+                expense.getAmount());
         tvAmountCurrency.setText(amountText);
         tvDate.setText(expense.getCreatedDate() != null ? expense.getCreatedDate() : "");
         tvCategory.setText(expense.getCategory() != null ? expense.getCategory() : "");

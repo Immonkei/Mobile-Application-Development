@@ -6,38 +6,44 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
-    <!-- Top toolbar (title + back) -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_detail"
+    <!-- STEP 1: WRAP TOOLBAR IN AN APPBARLAYOUT -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:title="@string/expense_detail_title"
-        app:titleCentered="true"
-        android:background="?attr/colorSurface"
-        app:navigationIcon="@drawable/ic_arrow_back" />
+        android:layout_height="wrap_content">
 
-    <!-- Content below toolbar -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_detail"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorSurface"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="@string/expense_detail_title"
+            app:titleCentered="true" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- STEP 2: ADD LAYOUT_BEHAVIOR AND REMOVE MARGINTOP -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:fillViewport="true"
         android:padding="16dp"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:fillViewport="true">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-            <!-- Card with detail content -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="6dp"
+                android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="?attr/colorSurfaceVariant"
-                android:layout_marginBottom="16dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -45,43 +51,40 @@
                     android:orientation="vertical"
                     android:padding="18dp">
 
-                    <!-- Title row -->
                     <TextView
                         android:id="@+id/tv_detail_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingBottom="8dp"
                         android:text="@string/expense_detail_title"
                         android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:paddingBottom="8dp"/>
+                        android:textStyle="bold" />
 
-                    <!-- Amount (big) -->
                     <TextView
                         android:id="@+id/tv_detail_amount_currency"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingBottom="12dp"
                         android:text="USD 12.34"
                         android:textAppearance="?attr/textAppearanceDisplaySmall"
-                        android:textStyle="bold"
-                        android:gravity="center"
-                        android:paddingBottom="12dp"/>
+                        android:textStyle="bold" />
 
-                    <!-- Date & Category row -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:weightSum="2"
-                        android:paddingBottom="12dp">
+                        android:orientation="horizontal"
+                        android:paddingBottom="12dp"
+                        android:weightSum="2">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
                             <ImageView
                                 android:layout_width="20dp"
@@ -94,15 +97,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:textAppearance="?attr/textAppearanceBodyMedium"/>
+                                android:textAppearance="?attr/textAppearanceBodyMedium" />
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical|end">
+                            android:gravity="center_vertical|end"
+                            android:orientation="horizontal">
 
                             <ImageView
                                 android:layout_width="20dp"
@@ -115,48 +118,43 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:textAppearance="?attr/textAppearanceBodyMedium"/>
+                                android:textAppearance="?attr/textAppearanceBodyMedium" />
                         </LinearLayout>
-
                     </LinearLayout>
 
-                    <!-- Divider -->
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="?attr/colorOnSurfaceVariant"
+                        android:layout_marginBottom="12dp"
                         android:alpha="0.08"
-                        android:layout_marginBottom="12dp"/>
+                        android:background="?attr/colorOnSurfaceVariant" />
 
-                    <!-- Remark block -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/fmt_remark"
-                        android:textAppearance="?attr/textAppearanceLabelSmall"
                         android:alpha="0.8"
-                        android:paddingBottom="6dp"/>
+                        android:paddingBottom="6dp"
+                        android:text="@string/fmt_remark"
+                        android:textAppearance="?attr/textAppearanceLabelSmall" />
 
                     <TextView
                         android:id="@+id/tv_detail_remark"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:padding="8dp"
+                        android:layout_marginBottom="6dp"
                         android:background="?attr/colorSurface"
-                        android:layout_marginBottom="6dp"/>
-
+                        android:padding="8dp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- small helper text -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/home_subtitle"
-                android:textAppearance="?attr/textAppearanceBodySmall"
                 android:alpha="0.7"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:text="@string/home_subtitle"
+                android:textAppearance="?attr/textAppearanceBodySmall" />
         </LinearLayout>
     </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

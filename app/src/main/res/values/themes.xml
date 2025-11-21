@@ -1,6 +1,9 @@
-<!-- app/src/main/res/values/themes.xml -->
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- ================== Base Application Theme ================== -->
     <style name="Theme.ExpenseTracker" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Brand colors -->
         <item name="colorPrimary">@color/md_primary</item>
         <item name="colorOnPrimary">@color/md_on_primary</item>
         <item name="colorPrimaryContainer">@color/md_primary_container</item>
@@ -9,72 +12,37 @@
         <item name="colorOnSecondary">@color/md_on_secondary</item>
         <item name="colorSecondaryContainer">@color/md_secondary_container</item>
 
+        <!-- Surface colors -->
         <item name="colorSurface">@color/md_surface</item>
         <item name="colorOnSurface">@color/md_on_surface</item>
         <item name="colorSurfaceVariant">@color/md_surface_variant</item>
         <item name="colorOutline">@color/md_outline</item>
 
+        <!-- Custom Typography -->
         <item name="textAppearanceTitleLarge">@style/TextAppearance.ExpenseTracker.TitleLarge</item>
         <item name="textAppearanceHeadlineSmall">@style/TextAppearance.ExpenseTracker.HeadlineSmall</item>
         <item name="textAppearanceBodyLarge">@style/TextAppearance.ExpenseTracker.BodyLarge</item>
         <item name="textAppearanceBodyMedium">@style/TextAppearance.ExpenseTracker.BodyMedium</item>
         <item name="textAppearanceLabelMedium">@style/TextAppearance.ExpenseTracker.LabelMedium</item>
 
+        <!-- System bar colors -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <!-- 
-      ... Your main App Theme <style> tag is probably here ...
-      <style name="Theme.ExpenseTracker" parent="Theme.Material3.DayNight.NoActionBar">
-          ...
-      </style>
-    -->
 
-    <!-- =================================================================== -->
-    <!-- ============== ADD ALL THE CODE BELOW TO themes.xml =============== -->
-    <!-- =================================================================== -->
+    <!-- ================== Custom Typography Styles ================== -->
+    <style name="TextAppearance.ExpenseTracker.TitleLarge" parent="TextAppearance.Material3.TitleLarge" />
+    <style name="TextAppearance.ExpenseTracker.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall" />
+    <style name="TextAppearance.ExpenseTracker.BodyLarge" parent="TextAppearance.Material3.BodyLarge" />
+    <style name="TextAppearance.ExpenseTracker.BodyMedium" parent="TextAppearance.Material3.BodyMedium" />
+    <style name="TextAppearance.ExpenseTracker.LabelMedium" parent="TextAppearance.Material3.LabelMedium" />
 
-    <!-- 1. FIX FOR ShapeAppearanceOverlay -->
-    <!-- This style is used for corner rounding on components like cards and buttons. -->
+
+    <!-- ================== FIX FOR MISSING STYLES ================== -->
     <style name="ShapeAppearanceOverlay" parent="" />
 
-    <!-- 2. FIX FOR TextAppearance -->
-    <!-- These styles define the typography for your app (font, size, etc.) -->
-    <!-- We will make them inherit from the standard Material 3 text appearances. -->
-
-    <style name="TextAppearance.ExpenseTracker.TitleLarge"
-        parent="TextAppearance.Material3.TitleLarge" />
-    <style name="TextAppearance.ExpenseTracker.HeadlineSmall"
-        parent="TextAppearance.Material3.HeadlineSmall" />
-    <style name="TextAppearance.ExpenseTracker.BodyLarge"
-        parent="TextAppearance.Material3.BodyLarge" />
-    <style name="TextAppearance.ExpenseTracker.BodyMedium"
-        parent="TextAppearance.Material3.BodyMedium" />
-    <style name="TextAppearance.ExpenseTracker.LabelMedium"
-        parent="TextAppearance.Material3.LabelMedium" />
-
-    <!-- 
-        ... Your other theme and style definitions are here ...
-    -->
-
-    <!-- =================================================================== -->
-    <!-- ============== ADD ALL THE CODE BELOW TO themes.xml =============== -->
-    <!-- =================================================================== -->
-
-    <!-- 1. FIX FOR BottomNav -->
-    <!-- Define the custom BottomNav style and make it inherit from the base Material 3 style. -->
+    <!-- ADD THIS NEW STYLE FOR THE BOTTOMNAV -->
     <style name="Widget.ExpenseTracker.BottomNav" parent="Widget.Material3.BottomNavigationView" />
 
-    <!-- 2. FIX FOR Filled Button -->
-    <!-- This is a standard Material 3 style. The fact that it's "not found" suggests your theme's parent might be incorrect. -->
-    <!-- First, ensure your main app theme inherits from a Material 3 theme, like this: -->
-    <!-- <style name="Theme.ExpenseTracker" parent="Theme.Material3.DayNight.NoActionBar"> -->
-    
-    <!-- If the theme parent is correct, defining the style explicitly like this can fix the linking issue. -->
-
-
-    <style name="Widget.ExpenseTracker.Card" parent="Widget.Material3.CardView.Elevated" />
-
-
-    </resources>
+</resources>

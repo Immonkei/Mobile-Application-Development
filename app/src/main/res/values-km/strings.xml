@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">កម្មវិធីតាមដានចំណាយ</string>
+    <string name="language">ភាសា</string>
+    <string name="current_language">ភាសាបច្ចុប្បន្ន៖</string>
+    <string name="select_language">ជ្រើសរើសភាសា</string>
+    <string name="app_info">ព័ត៌មានកម្មវិធី</string>
+    <string name="app_version">កម្មវិធីតាមដានចំណាយ v1.0</string>
+
+    <string name="add_new_category">បន្ថែមប្រភេទថ្មី</string>
+    <string name="category_name">ឈ្មោះប្រភេទ</string>
+    <string name="add_category">បន្ថែមប្រភេទ</string>
+    <string name="error_category_empty">ឈ្មោះប្រភេទមិនអាចទទេបានទេ</string>
+    <string name="error_category_exists">ប្រភេទមានរួចហើយ</string>
+    <string name="category_added_success">បានបន្ថែមប្រភេទដោយជោគជ័យ</string>
     <!-- Navigation -->
     <string name="nav_home">ទំព័រដើម</string>
     <string name="nav_add_expense">បន្ថែមចំណាយ</string>
     <string name="nav_expense_list">បញ្ជីចំណាយ</string>
+    <string name="nav_setting">ការកំណត់</string>
 
     <!-- Content descriptions -->
     <string name="content_fragment_container">កន្លែងបង្ហាញ Fragment</string>

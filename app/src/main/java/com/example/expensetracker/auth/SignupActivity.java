@@ -1,5 +1,6 @@
 package com.example.expensetracker.auth;
 
+import com.example.expensetracker.BaseActivity;
 import com.example.expensetracker.MainActivity;
 import com.example.expensetracker.R;
 import android.content.Intent;
@@ -20,7 +21,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends BaseActivity {
 
     private EditText etEmail, etPassword;
     private Button btnSignup;

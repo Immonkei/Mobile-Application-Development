@@ -2,8 +2,6 @@
     <string-array name="currencies">
         <item>KHR</item>
         <item>USD</item>
-        <item>THB</item>
-        <item>VND</item>
     </string-array>
 
     <string-array name="categories">
@@ -12,5 +10,17 @@
         <item>Shopping</item>
         <item>Entertainment</item>
         <item>Other</item>
+    </string-array>
+
+    <string-array name="language_entries">
+        <item>English</item>
+        <item>Khmer</item>
+        <!-- Add any other languages you want to support -->
+    </string-array>
+
+    <string-array name="language_values">
+        <item>en</item>
+        <item>km</item>
+        <!-- These are the corresponding codes for the languages above -->
     </string-array>
 </resources>

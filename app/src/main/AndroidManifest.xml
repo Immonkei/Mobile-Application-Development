@@ -40,8 +40,7 @@
             android:name=".MainActivity"
             android:exported="false"
             android:launchMode="singleInstance"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
-
+            android:configChanges="orientation|keyboardHidden|screenSize|locale|layoutDirection" />
         <!-- NewCategoryActivity is internal only -->
         <activity
             android:name=".ui.NewCategoryActivity"

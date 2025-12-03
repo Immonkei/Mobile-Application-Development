@@ -7,6 +7,12 @@
     <string name="app_info">ព័ត៌មានកម្មវិធី</string>
     <string name="app_version">កម្មវិធីតាមដានចំណាយ v1.0</string>
 
+    <string name="error_fill_all_fields">សូមបំពេញគ្រប់ប្រអប់ទាំងអស់</string>
+    xml
+    <string name="current_language_label">ភាសាបច្ចុប្បន្ន៖ ខ្មែរ</string>
+    <string name="current_language_prefix">ភាសាបច្ចុប្បន្ន៖</string>
+    <string name="language_name_english">ភាសាអង់គ្លេស</string>
+    <string name="language_name_khmer">ខ្មែរ</string>
     <string name="add_new_category">បន្ថែមប្រភេទថ្មី</string>
     <string name="category_name">ឈ្មោះប្រភេទ</string>
     <string name="add_category">បន្ថែមប្រភេទ</string>
@@ -64,8 +70,8 @@
     <string name="network_error_colon">បញ្ហាបណ្ដាញ៖</string>
     <!-- Spinners -->
     <string-array name="currency_array">
-        <item>USD</item>
-        <item>KHR</item>
+        <item>ដុលា</item>
+        <item>ខ្មែរ</item>
     </string-array>
     <string-array name="category_array">
         <item>កាហ្វេ</item>

@@ -6,19 +6,21 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.expensetracker.ui.AddExpenseFragment;
 import com.example.expensetracker.ui.ExpenseListFragment;
 import com.example.expensetracker.ui.HomeFragment;
 import com.example.expensetracker.ui.SettingFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-// ✅ Make sure it extends your BaseActivity
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MAIN_DEBUG";
     private static final String SELECTED_ITEM_KEY = "selected_item";
 
     private BottomNavigationView bottomNav;
+    private FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,55 +28,76 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         bottomNav = findViewById(R.id.bottom_nav);
-        FragmentManager fm = getSupportFragmentManager();
+        fm = getSupportFragmentManager();
 
-        // ✅ THE CORRECTED INITIALIZATION LOGIC
+        // This block ONLY runs on the very first creation of the activity.
+        // After a language change, savedInstanceState is NOT null, so Android's
+        // FragmentManager handles re-creating the fragments.
         if (savedInstanceState == null) {
-            // Instantiate all fragments first.
-            Fragment homeFragment = new HomeFragment();
-            Fragment addExpenseFragment = new AddExpenseFragment();
-            Fragment expenseListFragment = new ExpenseListFragment();
-            Fragment settingFragment = SettingFragment.newInstance();
-
-            // Use a single, atomic transaction.
-            fm.beginTransaction()
-                    .add(R.id.fragment_container, settingFragment, "setting")
-                    .add(R.id.fragment_container, expenseListFragment, "list")
-                    .add(R.id.fragment_container, addExpenseFragment, "add")
-                    .add(R.id.fragment_container, homeFragment, "home") // Add the home fragment last
-                    // Now hide all fragments EXCEPT the home fragment.
-                    .hide(settingFragment)
-                    .hide(expenseListFragment)
-                    .hide(addExpenseFragment)
-                    // The home fragment, being the last one added and not hidden, will be visible.
-                    .commitNow(); // Use commitNow() to ensure it happens synchronously before the next line.
+            initializeFragments();
         }
 
-        bottomNav.setOnItemSelectedListener(item -> {
-            String selectedTag = getTagForItemId(item.getItemId());
-            Fragment activeFragment = getActiveFragment(fm);
-            Fragment fragmentToShow = fm.findFragmentByTag(selectedTag);
+        setupBottomNavigation();
+        handleBackButton();
 
-            if (fragmentToShow != null && fragmentToShow != activeFragment) {
-                Log.d(TAG, "Switching to fragment: " + selectedTag);
-                fm.beginTransaction()
-                        .hide(activeFragment)
-                        .show(fragmentToShow)
-                        .commit();
-            }
-            return true;
-        });
-
-        // Restore selection after a configuration change
-        if (savedInstanceState != null) {
-            int selectedId = savedInstanceState.getInt(SELECTED_ITEM_KEY, R.id.nav_home);
-            bottomNav.setSelectedItemId(selectedId);
-        } else {
-            // For the first run, explicitly set the home item.
+        // The logic to restore the selected tab needs to run on every creation,
+        // but we only set the default on the very first run.
+        if (savedInstanceState == null) {
             bottomNav.setSelectedItemId(R.id.nav_home);
         }
+    }
 
-        // Handle back press using the modern API
+    private void initializeFragments() {
+        // Use a single transaction to add all fragments and hide the non-active ones.
+        // This prevents them from being visible all at once.
+        fm.beginTransaction()
+                .add(R.id.fragment_container, new HomeFragment(), "home")
+                .add(R.id.fragment_container, new AddExpenseFragment(), "add")
+                .add(R.id.fragment_container, new ExpenseListFragment(), "list")
+                .add(R.id.fragment_container, SettingFragment.newInstance(), "setting")
+                .commitNow(); // Using commitNow to ensure fragments are available immediately
+
+        // After adding, explicitly show the home fragment and hide the others.
+        showFragmentByTag("home");
+    }
+
+    private void setupBottomNavigation() {
+        bottomNav.setOnItemSelectedListener(item -> {
+            String selectedTag = getTagForItemId(item.getItemId());
+            showFragmentByTag(selectedTag);
+            return true;
+        });
+    }
+
+    private void showFragmentByTag(String tag) {
+        Fragment fragmentToShow = fm.findFragmentByTag(tag);
+        if (fragmentToShow == null) {
+            // This case should ideally not happen if initialization is correct.
+            Log.e(TAG, "Fragment with tag " + tag + " not found!");
+            return;
+        }
+
+        FragmentTransaction transaction = fm.beginTransaction();
+        for (Fragment fragment : fm.getFragments()) {
+            if (fragment == fragmentToShow) {
+                transaction.show(fragment);
+            } else {
+                transaction.hide(fragment);
+            }
+        }
+        transaction.commit();
+    }
+
+
+    private String getTagForItemId(int itemId) {
+        if (itemId == R.id.nav_home) return "home";
+        if (itemId == R.id.nav_add) return "add";
+        if (itemId == R.id.nav_list) return "list";
+        if (itemId == R.id.nav_setting) return "setting";
+        return "home";
+    }
+
+    private void handleBackButton() {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -87,27 +110,20 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private String getTagForItemId(int itemId) {
-        if (itemId == R.id.nav_home) return "home";
-        if (itemId == R.id.nav_add) return "add";
-        if (itemId == R.id.nav_list) return "list";
-        if (itemId == R.id.nav_setting) return "setting";
-        return "home"; // Default case
-    }
-
-    private Fragment getActiveFragment(FragmentManager fm) {
-        for (Fragment fragment : fm.getFragments()) {
-            if (fragment != null && fragment.isVisible()) {
-                return fragment;
-            }
-        }
-        // Fallback in case no fragment is visible yet during initialization
-        return fm.findFragmentByTag("home");
-    }
-
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        // Save the currently selected tab so we can restore it after recreation.
         outState.putInt(SELECTED_ITEM_KEY, bottomNav.getSelectedItemId());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore the selected tab. This is called after onCreate.
+        int selectedId = savedInstanceState.getInt(SELECTED_ITEM_KEY, R.id.nav_home);
+        bottomNav.setSelectedItemId(selectedId);
+        // Also ensure the correct fragment is visible.
+        showFragmentByTag(getTagForItemId(selectedId));
     }
 }

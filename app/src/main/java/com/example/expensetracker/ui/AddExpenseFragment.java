@@ -52,7 +52,6 @@ public class AddExpenseFragment extends Fragment {
     private MaterialButton btnSave;
     private Button btnAddCategory;
     private ArrayAdapter<String> categoryAdapter;
-    private List<String> categoryNames = new ArrayList<>();
     private ExecutorService executorService;
 
     public AddExpenseFragment() {}
@@ -80,7 +79,6 @@ public class AddExpenseFragment extends Fragment {
         executorService = Executors.newSingleThreadExecutor();
 
         setupCurrencySpinner();
-        setupCategorySpinner();
         setupDatePicker(root);
         setupFocusListeners();
         setupButtonListeners();
@@ -92,13 +90,14 @@ public class AddExpenseFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadCategoriesFromDatabase();
+        // Data loading is now handled in onResume()
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Reload categories when fragment resumes (e.g., after language change)
+        // Reload categories every time the fragment becomes visible.
+        // This is the perfect place to ensure data is fresh after a language change or returning from another screen.
         loadCategoriesFromDatabase();
     }
 
@@ -110,16 +109,6 @@ public class AddExpenseFragment extends Fragment {
         );
         actvCurrency.setAdapter(currencyAdapter);
         actvCurrency.setText("", false);
-    }
-
-    private void setupCategorySpinner() {
-        categoryAdapter = new ArrayAdapter<>(
-                requireContext(),
-                R.layout.list_item_dropdown,
-                categoryNames
-        );
-        actvCategory.setAdapter(categoryAdapter);
-        actvCategory.setText("", false);
     }
 
     private void setupDatePicker(View root) {
@@ -146,7 +135,11 @@ public class AddExpenseFragment extends Fragment {
     }
 
     private void setupFocusListeners() {
-        View.OnFocusChangeListener focusWatcher = (v, hasFocus) -> validate();
+        View.OnFocusChangeListener focusWatcher = (v, hasFocus) -> {
+            if (!hasFocus) {
+                validate();
+            }
+        };
         etAmount.setOnFocusChangeListener(focusWatcher);
         etDate.setOnFocusChangeListener(focusWatcher);
         actvCurrency.setOnFocusChangeListener(focusWatcher);
@@ -164,7 +157,6 @@ public class AddExpenseFragment extends Fragment {
                     .categoryDao()
                     .getAllCategoriesSync();
 
-            // Add default categories if database is empty
             if (categories.isEmpty()) {
                 addDefaultCategories();
                 categories = DatabaseHelper.getInstance(requireContext())
@@ -172,22 +164,34 @@ public class AddExpenseFragment extends Fragment {
                         .getAllCategoriesSync();
             }
 
-            List<Category> finalCategories = categories;
+            List<String> newCategoryNames = new ArrayList<>();
+            for (Category category : categories) {
+                newCategoryNames.add(category.getName());
+            }
+
+            // ✅✅✅ THE FIX IS HERE ✅✅✅
+            // Post the UI update to the main thread.
             runOnUiThread(() -> {
-                categoryNames.clear();
-                for (Category category : finalCategories) {
-                    categoryNames.add(category.getName());
+                // 1. Create a new adapter with the fresh data from the database.
+                categoryAdapter = new ArrayAdapter<>(
+                        requireContext(),
+                        R.layout.list_item_dropdown,
+                        newCategoryNames
+                );
+
+                // 2. Set this new adapter on the AutoCompleteTextView. This forces it to update.
+                if (actvCategory != null) {
+                    actvCategory.setAdapter(categoryAdapter);
                 }
-                categoryAdapter.notifyDataSetChanged();
             });
         });
     }
+
 
     private void addDefaultCategories() {
         String[] defaultCategories = getResources().getStringArray(R.array.category_array);
 
         for (String categoryName : defaultCategories) {
-            // Check if category already exists
             Category existing = DatabaseHelper.getInstance(requireContext())
                     .categoryDao()
                     .getCategoryByName(categoryName);
@@ -216,20 +220,22 @@ public class AddExpenseFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 100) {
-            // Reload categories when returning from NewCategoryActivity
+            // onResume() will already handle reloading, but this is a good fallback
             loadCategoriesFromDatabase();
         }
     }
 
     private boolean validate() {
-        boolean okAmount = etAmount.getText() != null && etAmount.getText().toString().trim().length() > 0;
-        boolean okDate = etDate.getText() != null && etDate.getText().toString().trim().length() > 0;
-        boolean okCurrency = actvCurrency.getText() != null && actvCurrency.getText().toString().trim().length() > 0;
-        boolean okCategory = actvCategory.getText() != null && actvCategory.getText().toString().trim().length() > 0;
+        boolean okAmount = etAmount.getText() != null && !etAmount.getText().toString().trim().isEmpty();
+        boolean okDate = etDate.getText() != null && !etDate.getText().toString().trim().isEmpty();
+        boolean okCurrency = actvCurrency.getText() != null && !actvCurrency.getText().toString().trim().isEmpty();
+        boolean okCategory = actvCategory.getText() != null && !actvCategory.getText().toString().trim().isEmpty();
 
         boolean enabled = okAmount && okDate && okCurrency && okCategory;
-        btnSave.setEnabled(enabled);
-        btnSave.setAlpha(enabled ? 1f : 0.5f);
+        if (btnSave != null) {
+            btnSave.setEnabled(enabled);
+            btnSave.setAlpha(enabled ? 1f : 0.5f);
+        }
         return enabled;
     }
 
@@ -237,138 +243,66 @@ public class AddExpenseFragment extends Fragment {
         try {
             Log.d("SAVE_EXPENSE", "=== Starting saveExpense ===");
 
-            // Get values
-            String amountStr = etAmount.getText() != null ? etAmount.getText().toString().trim() : "";
-            String currency = actvCurrency.getText() != null ? actvCurrency.getText().toString().trim() : "";
-            String date = etDate.getText() != null ? etDate.getText().toString().trim() : "";
-            String category = actvCategory.getText() != null ? actvCategory.getText().toString().trim() : "";
-            String remark = etRemark.getText() != null ? etRemark.getText().toString().trim() : "";
+            String amountStr = etAmount.getText().toString().trim();
+            String currency = actvCurrency.getText().toString().trim();
+            String date = etDate.getText().toString().trim();
+            String category = actvCategory.getText().toString().trim();
+            String remark = etRemark.getText().toString().trim();
 
-            Log.d("SAVE_EXPENSE", "Amount: " + amountStr + ", Currency: " + currency +
-                    ", Date: " + date + ", Category: " + category);
-
-            // Validation
-            if (amountStr.isEmpty()) {
-                etAmount.setError(getString(R.string.error_required));
-                etAmount.requestFocus();
+            if (!validate()) {
+                Toast.makeText(requireContext(), getString(R.string.error_fill_all_fields), Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (currency.isEmpty()) {
-                Toast.makeText(requireContext(), "Please select currency", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (date.isEmpty()) {
-                etDate.setError(getString(R.string.error_required));
-                etDate.requestFocus();
-                return;
-            }
-
-            if (category.isEmpty()) {
-                Toast.makeText(requireContext(), "Please select category", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Parse amount
             double amount;
             try {
                 amount = Double.parseDouble(amountStr);
-                Log.d("SAVE_EXPENSE", "Parsed amount: " + amount);
             } catch (NumberFormatException ex) {
                 etAmount.setError(getString(R.string.error_invalid_number));
                 etAmount.requestFocus();
                 return;
             }
 
-            // Create ISO 8601 date - Works on all Android versions
-            String createdDate;
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                createdDate = sdf.format(new Date());
-                Log.d("SAVE_EXPENSE", "Created date: " + createdDate);
-            } catch (Exception e) {
-                Log.e("SAVE_EXPENSE", "Date error: " + e.getMessage());
-                createdDate = new Date().toString();
-            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String createdDate = sdf.format(new Date());
 
-            // Get user ID
             String uid = "anonymous";
-            try {
-                if (FirebaseAuth.getInstance() != null &&
-                        FirebaseAuth.getInstance().getCurrentUser() != null) {
-                    uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    Log.d("SAVE_EXPENSE", "User ID: " + uid);
-                } else {
-                    Log.d("SAVE_EXPENSE", "No Firebase user, using anonymous");
-                }
-            } catch (Exception e) {
-                Log.e("SAVE_EXPENSE", "Firebase error: " + e.getMessage());
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             }
 
-            // Create expense object
             String id = UUID.randomUUID().toString();
-            Log.d("SAVE_EXPENSE", "Generated ID: " + id);
-
             Expense newExpense = new Expense(id, amount, currency, category, remark, uid, createdDate);
-            Log.d("SAVE_EXPENSE", "Expense object created");
 
-            // Disable save button
             btnSave.setEnabled(false);
 
-            // Make API call
-            try {
-                Log.d("SAVE_EXPENSE", "Creating Retrofit client...");
-                ExpenseApi api = RetrofitClient.getClient().create(ExpenseApi.class);
-                Call<Expense> call = api.addExpense(ApiConfig.DB_NAME, newExpense);
-                Log.d("SAVE_EXPENSE", "API call created, enqueuing...");
+            ExpenseApi api = RetrofitClient.getClient().create(ExpenseApi.class);
+            Call<Expense> call = api.addExpense(ApiConfig.DB_NAME, newExpense);
 
-                call.enqueue(new Callback<Expense>() {
-                    @Override
-                    public void onResponse(Call<Expense> call, Response<Expense> response) {
-                        btnSave.setEnabled(true);
-                        Log.d("SAVE_EXPENSE", "API Response code: " + response.code());
-
-                        if (response.isSuccessful()) {
-                            Log.d("SAVE_EXPENSE", "Expense saved successfully!");
-                            Toast.makeText(requireContext(),
-                                    getString(R.string.expense_saved),
-                                    Toast.LENGTH_SHORT).show();
-
-                            // Clear form instead of navigating (prevents crashes)
-                            clearForm();
-
-                        } else {
-                            String errorMsg = "Failed to save: " + response.code();
-                            Log.e("SAVE_EXPENSE", errorMsg);
-                            Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
-                        }
+            call.enqueue(new Callback<Expense>() {
+                @Override
+                public void onResponse(@NonNull Call<Expense> call, @NonNull Response<Expense> response) {
+                    btnSave.setEnabled(true);
+                    if (response.isSuccessful()) {
+                        Toast.makeText(requireContext(), getString(R.string.expense_saved), Toast.LENGTH_SHORT).show();
+                        clearForm();
+                    } else {
+                        String errorMsg = "Failed to save: " + response.code();
+                        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<Expense> call, Throwable t) {
-                        btnSave.setEnabled(true);
-                        Log.e("SAVE_EXPENSE", "API Failure: " + t.getMessage(), t);
-                        Toast.makeText(requireContext(),
-                                "Network error: " + t.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-
-            } catch (Exception e) {
-                btnSave.setEnabled(true);
-                Log.e("SAVE_EXPENSE", "Retrofit setup error: " + e.getMessage(), e);
-                Toast.makeText(requireContext(),
-                        "API error: " + e.getMessage(),
-                        Toast.LENGTH_LONG).show();
-            }
+                @Override
+                public void onFailure(@NonNull Call<Expense> call, @NonNull Throwable t) {
+                    btnSave.setEnabled(true);
+                    Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
 
         } catch (Exception e) {
             Log.e("SAVE_EXPENSE", "Unexpected error in saveExpense: " + e.getMessage(), e);
-            Toast.makeText(requireContext(),
-                    "Error: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
             if (btnSave != null) {
                 btnSave.setEnabled(true);
             }
@@ -376,26 +310,18 @@ public class AddExpenseFragment extends Fragment {
     }
 
     private void clearForm() {
-        try {
-            if (etAmount != null) etAmount.setText("");
-            if (etDate != null) etDate.setText("");
-            if (etRemark != null) etRemark.setText("");
-            if (actvCurrency != null) actvCurrency.setText("");
-            if (actvCategory != null) actvCategory.setText("");
+        if (etAmount != null) etAmount.setText("");
+        if (etDate != null) etDate.setText("");
+        if (etRemark != null) etRemark.setText("");
+        if (actvCurrency != null) actvCurrency.setText("", false);
+        if (actvCategory != null) actvCategory.setText("", false);
 
-            validate();
-
-            Toast.makeText(requireContext(),
-                    "Form cleared. Ready for next expense.",
-                    Toast.LENGTH_SHORT).show();
-
-        } catch (Exception e) {
-            Log.e("CLEAR_FORM", "Error clearing form: " + e.getMessage());
-        }
+        etAmount.requestFocus(); // Set focus back to the first field
+        validate();
     }
 
     private void runOnUiThread(Runnable action) {
-        if (getActivity() != null) {
+        if (getActivity() != null && !getActivity().isFinishing()) {
             getActivity().runOnUiThread(action);
         }
     }

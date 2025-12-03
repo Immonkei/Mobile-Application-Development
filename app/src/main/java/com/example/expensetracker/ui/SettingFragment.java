@@ -7,20 +7,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.TextView; // ✅ 1. IMPORT TextView
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.example.expensetracker.R;
 import com.example.expensetracker.utils.LocaleHelper;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class SettingFragment extends Fragment {
 
-    private Spinner languageSpinner;
-    private TextView currentLanguageText;
-    private boolean isFirstTime = true;
+    private boolean isInitialSelection = true;
+    private TextView currentLanguageText; // ✅ 2. ADD a variable for the TextView
 
     public SettingFragment() {
         // Required empty public constructor
@@ -41,15 +38,36 @@ public class SettingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Spinner languageSpinner = view.findViewById(R.id.language_spinner);
 
-        currentLanguageText = view.findViewById(R.id.current_language_text);
-        languageSpinner = view.findViewById(R.id.language_spinner);
+        // ✅ 3. FIND the TextView by its ID
+        // Make sure your TextView in fragment_setting.xml has this ID
+        currentLanguageText = view.findViewById(R.id.current_language_value);
 
-        setupLanguageSpinner();
-        updateCurrentLanguageDisplay();
+        setupLanguageSpinner(languageSpinner);
     }
 
-    private void setupLanguageSpinner() {
+    // ✅ 4. ADD the onResume method
+    @Override
+    public void onResume() {
+        super.onResume();
+        // onResume is called after recreation is complete. This is the perfect
+        // time to make sure the UI displays the correct state.
+        updateLanguageDisplay();
+
+        // We also reset the spinner flag here to prevent loops
+        isInitialSelection = true;
+    }
+
+    // ✅ 5. ADD the UI update method
+    private void updateLanguageDisplay() {
+        // This method will now use the fully loaded resources.
+        if (currentLanguageText != null) {
+            currentLanguageText.setText(getString(R.string.current_language_label));
+        }
+    }
+
+    private void setupLanguageSpinner(Spinner languageSpinner) {
         String[] languageNames = getResources().getStringArray(R.array.language_entries);
         String[] languageCodes = getResources().getStringArray(R.array.language_values);
 
@@ -62,22 +80,26 @@ public class SettingFragment extends Fragment {
         languageSpinner.setAdapter(adapter);
 
         String currentLang = LocaleHelper.getSavedLanguage(requireContext());
-        int position = currentLang.equals("km") ? 1 : 0;
-        languageSpinner.setSelection(position);
+        for (int i = 0; i < languageCodes.length; i++) {
+            if (languageCodes[i].equals(currentLang)) {
+                languageSpinner.setSelection(i);
+                break;
+            }
+        }
 
         languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (isFirstTime) {
-                    isFirstTime = false;
+                if (isInitialSelection) {
+                    isInitialSelection = false;
                     return;
                 }
 
-                String selectedLang = languageCodes[position];
-                String currentLang = LocaleHelper.getSavedLanguage(requireContext());
+                String selectedLangCode = languageCodes[position];
+                String currentLangCode = LocaleHelper.getSavedLanguage(requireContext());
 
-                if (!selectedLang.equals(currentLang)) {
-                    changeLanguage(selectedLang);
+                if (!selectedLangCode.equals(currentLangCode)) {
+                    changeLanguageAndRecreate(selectedLangCode);
                 }
             }
 
@@ -87,79 +109,11 @@ public class SettingFragment extends Fragment {
         });
     }
 
-    private void changeLanguage(String languageCode) {
-        // Save the new language
+    private void changeLanguageAndRecreate(String languageCode) {
         LocaleHelper.setLocale(requireContext(), languageCode);
 
-        // Show toast message
-        String message = languageCode.equals("km")
-                ? "ភាសាត្រូវបានកំណត់ទៅខ្មែរ"
-                : "Language set to English";
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-
-        // Update the display IMMEDIATELY in this fragment
-        updateCurrentLanguageDisplay();
-
-        // Update the spinner text to show current selection
-        updateSpinnerDisplay(languageCode);
-
-        // Apply locale to the CURRENT activity (MainActivity)
         if (getActivity() != null) {
-            LocaleHelper.applySavedLocale(getActivity());
-
-            // Update the Bottom Navigation labels
-            updateBottomNavigationLabels();
-
-            // Update the fragment title
-            updateFragmentTitle();
+            getActivity().recreate();
         }
-
-        // Language will persist for next app launch
-        // User stays in SettingsFragment
-    }
-
-    private void updateCurrentLanguageDisplay() {
-        String currentLang = LocaleHelper.getSavedLanguage(requireContext());
-        String displayText = currentLang.equals("km")
-                ? "ភាសាបច្ចុប្បន្ន៖ ខ្មែរ"
-                : "Current Language: English";
-        if (currentLanguageText != null) {
-            currentLanguageText.setText(displayText);
-        }
-    }
-
-    private void updateSpinnerDisplay(String languageCode) {
-        if (languageSpinner != null) {
-            // Force update spinner selection
-            int position = languageCode.equals("km") ? 1 : 0;
-            languageSpinner.setSelection(position);
-        }
-    }
-
-    private void updateBottomNavigationLabels() {
-        if (getActivity() != null) {
-            BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_nav);
-            if (bottomNav != null) {
-                // Get menu items
-                bottomNav.getMenu().findItem(R.id.nav_home).setTitle(R.string.nav_home);
-                bottomNav.getMenu().findItem(R.id.nav_add).setTitle(R.string.nav_add_expense);
-                bottomNav.getMenu().findItem(R.id.nav_list).setTitle(R.string.nav_expense_list);
-                bottomNav.getMenu().findItem(R.id.nav_setting).setTitle(R.string.nav_setting);
-            }
-        }
-    }
-
-    private void updateFragmentTitle() {
-        if (getActivity() != null) {
-            // Update the toolbar title if you have one
-            // getActivity().setTitle(R.string.settings_title);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Refresh display when coming back to fragment
-        updateCurrentLanguageDisplay();
     }
 }

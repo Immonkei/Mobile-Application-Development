@@ -59,6 +59,11 @@
     <string name="empty_title">No expenses yet</string>
     <string name="empty_sub">Add an expense to get started.</string>
 
+    <string name="error_fill_all_fields">Please fill all required fields</string>
+    <string name="current_language_label">Current Language: English</string>
+    <string name="current_language_prefix">Current Language:</string>
+    <string name="language_name_english">English</string>
+    <string name="language_name_khmer">Khmer</string>
     <string name="failed_to_load_expense">Failed to load expense</string>
     <string name="network_error_colon">Network error:</string>
     <!-- Spinners / dropdown arrays -->

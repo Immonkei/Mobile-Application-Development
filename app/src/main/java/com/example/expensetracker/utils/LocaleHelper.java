@@ -1,81 +1,86 @@
 package com.example.expensetracker.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
+import android.preference.PreferenceManager;
+
 import java.util.Locale;
 
 public class LocaleHelper {
 
-    private static final String PREFS_NAME = "AppPrefs";
-    private static final String KEY_LANG = "app_language";
+    private static final String SELECTED_LANGUAGE = "Locale.Helper.Selected.Language";
 
-    // Save language preference
-    public static void saveLanguage(Context context, String languageCode) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        prefs.edit().putString(KEY_LANG, languageCode).apply();
-    }
-
-    // Get saved language
-    public static String getSavedLanguage(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(KEY_LANG, "en");
-    }
-
-    // Apply locale to app
-    public static void applySavedLocale(Context context) {
-        String language = getSavedLanguage(context);
-        setAppLocale(context, language);
-    }
-
-    // Set and save new language
-    public static void setLocale(Context context, String languageCode) {
-        saveLanguage(context, languageCode);
-        setAppLocale(context, languageCode);
-    }
-
-    // Apply locale to app configuration
-    private static void setAppLocale(Context context, String language) {
-        Locale locale = new Locale(language);
-        Locale.setDefault(locale);
-
-        Resources resources = context.getResources();
-        Configuration config = resources.getConfiguration();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            config.setLocale(locale);
-            config.setLayoutDirection(locale);
-        } else {
-            config.locale = locale;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                config.setLayoutDirection(locale);
-            }
-        }
-
-        resources.updateConfiguration(config, resources.getDisplayMetrics());
-    }
-
-    // For attachBaseContext
+    // This method is called by your BaseActivity to set the language when the app starts.
     public static Context onAttach(Context context) {
-        String language = getSavedLanguage(context);
-        return updateResources(context, language);
+        String lang = getPersistedData(context, Locale.getDefault().getLanguage());
+        return setLocale(context, lang);
     }
 
+    // This method gets the currently saved language. It's used by your SettingFragment.
+    public static String getSavedLanguage(Context context) {
+        return getPersistedData(context, Locale.getDefault().getLanguage());
+    }
+
+    // ✅✅✅ THIS IS THE METHOD THE COMPILER CANNOT FIND ✅✅✅
+    // This is the method that SettingFragment calls to save the new language choice.
+    // Its visibility MUST be `public` and it MUST be `static`.
+    public static Context setLocale(Context context, String language) {
+        persist(context, language); // Save the language choice
+
+        // This logic updates the Android configuration for the new language
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return updateResources(context, language);
+        }
+        return updateResourcesLegacy(context, language);
+    }
+
+    // This is a private helper method to save the language to SharedPreferences.
+    private static void persist(Context context, String language) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(SELECTED_LANGUAGE, language);
+        editor.apply();
+    }
+
+    // This is a private helper method to read the saved language from SharedPreferences.
+    private static String getPersistedData(Context context, String defaultLanguage) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(SELECTED_LANGUAGE, defaultLanguage);
+    }
+
+    // --- The following methods are for updating the app's configuration. ---
+
+    @TargetApi(Build.VERSION_CODES.N)
     private static Context updateResources(Context context, String language) {
         Locale locale = new Locale(language);
         Locale.setDefault(locale);
 
-        Resources resources = context.getResources();
-        Configuration config = resources.getConfiguration();
-        config.setLocale(locale);
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(locale);
+        configuration.setLayoutDirection(locale);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return context.createConfigurationContext(config);
-        } else {
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-            return context;
+        return context.createConfigurationContext(configuration);
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Context updateResourcesLegacy(Context context, String language) {
+        Locale locale = new Locale(language);
+        Locale.setDefault(locale);
+
+        Resources resources = context.getResources();
+
+        Configuration configuration = resources.getConfiguration();
+        configuration.locale = locale;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            configuration.setLayoutDirection(locale);
         }
+
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
+        return context;
     }
 }

@@ -50,16 +50,6 @@ public class HomeFragment extends Fragment {
         } else {
             tvUserEmail.setText("Welcome, Guest!");
         }
-
-        // ✅ Sign out logic
-        btnSignOut.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            requireActivity().finish();
-        });
-
         return view;
     }
 }

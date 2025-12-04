@@ -19,6 +19,7 @@
     <string name="error_category_empty">ឈ្មោះប្រភេទមិនអាចទទេបានទេ</string>
     <string name="error_category_exists">ប្រភេទមានរួចហើយ</string>
     <string name="category_added_success">បានបន្ថែមប្រភេទដោយជោគជ័យ</string>
+    <string name="sign_out">ចាកចេញ</string>
     <!-- Navigation -->
     <string name="nav_home">ទំព័រដើម</string>
     <string name="nav_add_expense">បន្ថែមចំណាយ</string>

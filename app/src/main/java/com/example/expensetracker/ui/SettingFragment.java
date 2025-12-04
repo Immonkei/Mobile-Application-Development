@@ -1,5 +1,6 @@
 package com.example.expensetracker.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,16 +9,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView; // ✅ 1. IMPORT TextView
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.example.expensetracker.R;
+import com.example.expensetracker.auth.LoginActivity;
 import com.example.expensetracker.utils.LocaleHelper;
+import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingFragment extends Fragment {
 
     private boolean isInitialSelection = true;
-    private TextView currentLanguageText; // ✅ 2. ADD a variable for the TextView
+    private TextView currentLanguageText;
+    private MaterialButton btnSignOut;
 
     public SettingFragment() {
         // Required empty public constructor
@@ -116,4 +123,35 @@ public class SettingFragment extends Fragment {
             getActivity().recreate();
         }
     }
+
+
+    private void setupSignOutButton() {
+        View btnSignOut = null;
+        btnSignOut.setOnClickListener(v -> {
+            signOutUser();
+        });
+    }
+
+    private void signOutUser() {
+        try {
+            // Sign out from Firebase
+            FirebaseAuth.getInstance().signOut();
+
+            // Navigate to LoginActivity
+            Intent intent = new Intent(requireActivity(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            requireActivity().finish();
+
+            Toast.makeText(requireContext(),
+                    getString(R.string.sign_out),
+                    Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            Toast.makeText(requireContext(),
+                    "Error signing out: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

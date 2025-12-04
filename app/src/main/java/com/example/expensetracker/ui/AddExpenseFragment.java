@@ -1,8 +1,5 @@
-package com.example.expensetracker.ui;
-
-import android.app.DatePickerDialog;
+package com.example.expensetracker.ui;import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,11 +60,9 @@ public class AddExpenseFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_add_expense, container, false);
 
+        // --- 1. INITIALIZE ALL VIEWS FIRST ---
+        // This is the most important step. Find every UI component.
         MaterialToolbar toolbar = root.findViewById(R.id.toolbar_add);
-        if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
-        }
-
         etAmount = root.findViewById(R.id.et_amount);
         etDate = root.findViewById(R.id.et_date);
         etRemark = root.findViewById(R.id.et_remark);
@@ -78,28 +73,47 @@ public class AddExpenseFragment extends Fragment {
 
         executorService = Executors.newSingleThreadExecutor();
 
+        // --- 2. SETUP LISTENERS AND HELPERS NEXT ---
+        // Now that all variables have a value, it is safe to use them.
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
+        }
+
         setupCurrencySpinner();
         setupDatePicker(root);
         setupFocusListeners();
+
+        // ✅ THE FIX: Call setupButtonListeners() AFTER the buttons have been found.
         setupButtonListeners();
 
         validate();
         return root;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // Data loading is now handled in onResume()
+    // This method is now safe because we guarantee btnSave and btnAddCategory are not null.
+    private void setupButtonListeners() {
+        if (btnSave != null) {
+            btnSave.setOnClickListener(v -> saveExpense());
+        } else {
+            Log.e("AddExpenseFragment", "btnSave is null. Check R.id.btn_save in your layout.");
+        }
+
+        if (btnAddCategory != null) {
+            btnAddCategory.setOnClickListener(v -> openNewCategoryActivity());
+        } else {
+            Log.e("AddExpenseFragment", "btnAddCategory is null. Check R.id.btn_add_category in your layout.");
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Reload categories every time the fragment becomes visible.
-        // This is the perfect place to ensure data is fresh after a language change or returning from another screen.
         loadCategoriesFromDatabase();
     }
+
+    // ... The rest of your file (saveExpense, loadCategoriesFromDatabase, etc.) remains the same ...
+    // Make sure the other methods from your original file are still present below this line.
+    // I am omitting them here for brevity, but you should keep them in your file.
 
     private void setupCurrencySpinner() {
         ArrayAdapter<String> currencyAdapter = new ArrayAdapter<>(
@@ -146,11 +160,6 @@ public class AddExpenseFragment extends Fragment {
         actvCategory.setOnFocusChangeListener(focusWatcher);
     }
 
-    private void setupButtonListeners() {
-        btnSave.setOnClickListener(v -> saveExpense());
-        btnAddCategory.setOnClickListener(v -> openNewCategoryActivity());
-    }
-
     private void loadCategoriesFromDatabase() {
         executorService.execute(() -> {
             List<Category> categories = DatabaseHelper.getInstance(requireContext())
@@ -169,17 +178,12 @@ public class AddExpenseFragment extends Fragment {
                 newCategoryNames.add(category.getName());
             }
 
-            // ✅✅✅ THE FIX IS HERE ✅✅✅
-            // Post the UI update to the main thread.
             runOnUiThread(() -> {
-                // 1. Create a new adapter with the fresh data from the database.
                 categoryAdapter = new ArrayAdapter<>(
                         requireContext(),
                         R.layout.list_item_dropdown,
                         newCategoryNames
                 );
-
-                // 2. Set this new adapter on the AutoCompleteTextView. This forces it to update.
                 if (actvCategory != null) {
                     actvCategory.setAdapter(categoryAdapter);
                 }
@@ -218,9 +222,7 @@ public class AddExpenseFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == 100) {
-            // onResume() will already handle reloading, but this is a good fallback
             loadCategoriesFromDatabase();
         }
     }
@@ -241,8 +243,6 @@ public class AddExpenseFragment extends Fragment {
 
     private void saveExpense() {
         try {
-            Log.d("SAVE_EXPENSE", "=== Starting saveExpense ===");
-
             String amountStr = etAmount.getText().toString().trim();
             String currency = actvCurrency.getText().toString().trim();
             String date = etDate.getText().toString().trim();
@@ -315,8 +315,7 @@ public class AddExpenseFragment extends Fragment {
         if (etRemark != null) etRemark.setText("");
         if (actvCurrency != null) actvCurrency.setText("", false);
         if (actvCategory != null) actvCategory.setText("", false);
-
-        etAmount.requestFocus(); // Set focus back to the first field
+        etAmount.requestFocus();
         validate();
     }
 

@@ -66,6 +66,8 @@
     <string name="language_name_khmer">Khmer</string>
     <string name="failed_to_load_expense">Failed to load expense</string>
     <string name="network_error_colon">Network error:</string>
+    <string name="sign_out">Signout</string>
+
     <!-- Spinners / dropdown arrays -->
     <string-array name="currency_array">
         <item>USD</item>

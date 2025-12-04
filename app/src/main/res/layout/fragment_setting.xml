@@ -122,5 +122,17 @@
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_sign_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_gravity="center"
+        android:text="@string/sign_out"
+        android:textColor="@android:color/white"
+        app:backgroundTint="?attr/colorPrimary"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp" />
+
 
 </LinearLayout>

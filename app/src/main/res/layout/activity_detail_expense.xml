@@ -6,10 +6,11 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
-    <!-- STEP 1: WRAP TOOLBAR IN AN APPBARLAYOUT -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:elevation="2dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar_detail"
@@ -18,17 +19,21 @@
             android:background="?attr/colorSurface"
             app:navigationIcon="@drawable/ic_arrow_back"
             app:title="@string/expense_detail_title"
+            app:titleTextAppearance="@style/ToolbarTitleBold"
             app:titleCentered="true" />
+
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- STEP 2: ADD LAYOUT_BEHAVIOR AND REMOVE MARGINTOP -->
+    <!-- Content with scrolling behavior -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:descendantFocusability="beforeDescendants"
         android:fillViewport="true"
-        android:padding="16dp"
+        android:clipToPadding="false"
+        android:padding="20dp"
+        android:scrollbars="none"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -37,124 +42,284 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
+            <!-- Main Detail Card with enhanced styling -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="20dp"
                 app:cardBackgroundColor="?attr/colorSurfaceVariant"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="6dp">
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="18dp">
+                    android:padding="24dp">
 
-                    <TextView
-                        android:id="@+id/tv_detail_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingBottom="8dp"
-                        android:text="@string/expense_detail_title"
-                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tv_detail_amount_currency"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingBottom="12dp"
-                        android:text="USD 12.34"
-                        android:textAppearance="?attr/textAppearanceDisplaySmall"
-                        android:textStyle="bold" />
-
+                    <!-- Title with accent bar -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingBottom="12dp"
-                        android:weightSum="2">
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
 
-                        <LinearLayout
+                        <View
+                            android:layout_width="5dp"
+                            android:layout_height="32dp"
+                            android:background="?attr/colorPrimary"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:id="@+id/tv_detail_title"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                            android:text="@string/expense_detail_title"
+                            android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                            android:textStyle="bold" />
 
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_calendar_today"
-                                android:tint="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tv_detail_date"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:textAppearance="?attr/textAppearanceBodyMedium" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_vertical|end"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_label"
-                                android:tint="?attr/colorOnSurface" />
-
-                            <TextView
-                                android:id="@+id/tv_detail_category"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:textAppearance="?attr/textAppearanceBodyMedium" />
-                        </LinearLayout>
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="12dp"
-                        android:alpha="0.08"
-                        android:background="?attr/colorOnSurfaceVariant" />
-
-                    <TextView
+                    <!-- Amount Display Card -->
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:alpha="0.8"
-                        android:paddingBottom="6dp"
-                        android:text="@string/fmt_remark"
-                        android:textAppearance="?attr/textAppearanceLabelSmall" />
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="?attr/colorPrimaryContainer"
+                        android:layout_marginBottom="24dp">
 
-                    <TextView
-                        android:id="@+id/tv_detail_remark"
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Amount"
+                                android:textAppearance="?attr/textAppearanceLabelMedium"
+                                android:textColor="?attr/colorOnPrimaryContainer"
+                                android:alpha="0.7"
+                                android:textAllCaps="true"
+                                android:letterSpacing="0.1"
+                                android:layout_marginBottom="8dp" />
+
+                            <TextView
+                                android:id="@+id/tv_detail_amount_currency"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="USD 12.34"
+                                android:textAppearance="?attr/textAppearanceDisplaySmall"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnPrimaryContainer" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Info Grid Section -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
+                        android:orientation="vertical"
                         android:background="?attr/colorSurface"
-                        android:padding="8dp"
-                        android:textAppearance="?attr/textAppearanceBodyMedium" />
+                        android:padding="16dp"
+                        android:layout_marginBottom="20dp"
+                        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                        <!-- Date Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingVertical="12dp">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                app:cardCornerRadius="20dp"
+                                app:cardElevation="0dp"
+                                app:cardBackgroundColor="?attr/colorPrimaryContainer">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_calendar_today"
+                                    android:tint="?attr/colorOnPrimaryContainer" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="16dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Date"
+                                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:alpha="0.6"
+                                    android:textAllCaps="true"
+                                    android:letterSpacing="0.05" />
+
+                                <TextView
+                                    android:id="@+id/tv_detail_date"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:textAppearance="?attr/textAppearanceBodyLarge"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <!-- Divider -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="?attr/colorOnSurfaceVariant"
+                            android:alpha="0.1"
+                            android:layout_marginVertical="4dp" />
+
+                        <!-- Category Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingVertical="12dp">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                app:cardCornerRadius="20dp"
+                                app:cardElevation="0dp"
+                                app:cardBackgroundColor="?attr/colorSecondaryContainer">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_label"
+                                    android:tint="?attr/colorOnSecondaryContainer" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="16dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Category"
+                                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:alpha="0.6"
+                                    android:textAllCaps="true"
+                                    android:letterSpacing="0.05" />
+
+                                <TextView
+                                    android:id="@+id/tv_detail_category"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:textAppearance="?attr/textAppearanceBodyLarge"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Remark Section with enhanced styling -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fmt_remark"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textColor="?attr/colorOnSurface"
+                            android:alpha="0.7"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.05"
+                            android:layout_marginBottom="12dp" />
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="?attr/colorSurface">
+
+                            <TextView
+                                android:id="@+id/tv_detail_remark"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="16dp"
+                                android:minHeight="80dp"
+                                android:gravity="top|start"
+                                android:textAppearance="?attr/textAppearanceBodyMedium"
+                                android:lineSpacingExtra="4dp" />
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
                 </LinearLayout>
+
             </com.google.android.material.card.MaterialCardView>
 
-            <TextView
+            <!-- Footer message card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:alpha="0.7"
-                android:gravity="center"
-                android:text="@string/home_subtitle"
-                android:textAppearance="?attr/textAppearanceBodySmall" />
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutline"
+                android:alpha="0.6"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:gravity="center"
+                    android:text="@string/home_subtitle"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:lineSpacingExtra="2dp" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Bottom spacing -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+
         </LinearLayout>
+
     </ScrollView>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

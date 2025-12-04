@@ -110,7 +110,6 @@ public class ExpenseListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // stable UI — don't force reload here
         if (recycler != null) {
             recycler.clearFocus();
             recycler.stopScroll();

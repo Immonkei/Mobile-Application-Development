@@ -1,138 +1,249 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:background="@color/md_surface">
+    android:background="@color/md_surface"
+    android:fillViewport="true">
 
-    <!-- Title -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/nav_setting"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@color/md_on_surface"
-        android:layout_marginBottom="32dp" />
-
-    <!-- Language Section Card -->
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
-        app:cardBackgroundColor="@color/md_surface_variant"
-        android:layout_marginBottom="24dp">
+        android:orientation="vertical"
+        android:padding="20dp">
 
+        <!-- Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginBottom="24dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/language"
-                android:textSize="18sp"
+                android:text="@string/nav_setting"
+                android:textSize="28sp"
                 android:textStyle="bold"
                 android:textColor="@color/md_on_surface"
-                android:layout_marginBottom="12dp" />
+                android:letterSpacing="0.01" />
 
-            <!-- Current Language Display -->
+            <View
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="8dp"
+                android:background="?attr/colorPrimary"
+                android:alpha="0.8" />
+
+        </LinearLayout>
+
+        <!-- Language Section Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/md_surface_variant"
+            android:layout_marginBottom="16dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@color/md_primary_container"
-                android:padding="12dp"
-                android:layout_marginBottom="16dp"
-                android:backgroundTint="@color/md_primary_container">
+                android:orientation="vertical"
+                android:padding="20dp">
 
+                <!-- Section Header with Icon -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="20dp">
 
-                <!-- 2. This is the DYNAMIC VALUE. We will set this from Java code. -->
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/colorPrimary"
+                        android:layout_marginEnd="12dp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/language"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_on_surface" />
+
+                </LinearLayout>
+
+                <!-- Current Language Display -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/md_primary_container"
+                    android:padding="16dp"
+                    android:layout_marginBottom="20dp"
+                    android:elevation="1dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Current Language"
+                        android:textSize="12sp"
+                        android:textColor="@color/md_on_surface"
+                        android:alpha="0.7"
+                        android:textAllCaps="true"
+                        android:letterSpacing="0.05"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/current_language_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_on_surface" />
+
+                </LinearLayout>
+
+                <!-- Language Selector -->
                 <TextView
-                    android:id="@+id/current_language_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp" />
+                    android:text="@string/select_language"
+                    android:textSize="13sp"
+                    android:textColor="@color/md_outline"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.05"
+                    android:layout_marginBottom="12dp" />
+
+                <Spinner
+                    android:id="@+id/language_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/spinner_background_md"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="@color/md_on_surface"
+                    android:elevation="2dp" />
 
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-            <!-- Language Selector -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/select_language"
-                android:textSize="14sp"
-                android:textColor="@color/md_outline"
-                android:layout_marginBottom="8dp" />
-
-            <Spinner
-                android:id="@+id/language_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/spinner_background_md"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:textColor="@color/md_on_surface" />
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- App Info Card -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="1dp"
-        app:cardBackgroundColor="@color/md_surface_variant">
-
-        <LinearLayout
+        <!-- App Info Card -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/md_surface_variant"
+            android:layout_marginBottom="24dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_info"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/md_on_surface"
-                android:layout_marginBottom="12dp" />
+                android:orientation="vertical"
+                android:padding="20dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_version"
-                android:textSize="14sp"
-                android:textColor="@color/md_outline" />
+                <!-- Section Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Build 1.0.0"
-                android:textSize="12sp"
-                android:textColor="@color/md_outline"
-                android:layout_marginTop="4dp" />
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/colorPrimary"
+                        android:layout_marginEnd="12dp" />
 
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_sign_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_gravity="center"
-        android:text="@string/sign_out"
-        android:textColor="@android:color/white"
-        app:backgroundTint="?attr/colorPrimary"
-        android:paddingStart="32dp"
-        android:paddingEnd="32dp" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/app_info"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_on_surface" />
 
+                </LinearLayout>
 
-</LinearLayout>
+                <!-- Version Info -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/app_version"
+                        android:textSize="14sp"
+                        android:textColor="@color/md_on_surface" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Build 1.0.0"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_outline" />
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/md_outline"
+                    android:alpha="0.2" />
+
+                <!-- Additional Info -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="© 2024 Your App Name"
+                    android:textSize="12sp"
+                    android:textColor="@color/md_outline"
+                    android:alpha="0.7" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Spacer to push button down -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:minHeight="16dp" />
+
+        <!-- Sign Out Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_sign_out"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/sign_out"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:backgroundTint="?attr/colorPrimary"
+            app:cornerRadius="12dp"
+            app:elevation="2dp"
+            android:letterSpacing="0.02"
+            app:icon="@android:drawable/ic_menu_close_clear_cancel"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp" />
+
+    </LinearLayout>
+
+</ScrollView>

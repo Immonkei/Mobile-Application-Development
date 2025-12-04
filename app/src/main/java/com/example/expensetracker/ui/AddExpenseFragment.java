@@ -83,7 +83,6 @@ public class AddExpenseFragment extends Fragment {
         setupDatePicker(root);
         setupFocusListeners();
 
-        // ✅ THE FIX: Call setupButtonListeners() AFTER the buttons have been found.
         setupButtonListeners();
 
         validate();

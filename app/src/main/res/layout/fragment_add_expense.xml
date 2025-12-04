@@ -6,15 +6,24 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
-    <!-- Top app bar -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_add"
+    <!-- Top app bar with elevation -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:title="@string/add_expense_title"
-        app:titleCentered="true"
+        android:layout_height="wrap_content"
         android:background="?attr/colorSurface"
-        android:elevation="0dp" />
+        app:elevation="0dp">
+
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_add"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/add_expense_title"
+            app:titleCentered="true"
+            app:titleTextAppearance="@style/ToolbarTitleBold"
+            android:elevation="2dp" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Content area -->
     <androidx.core.widget.NestedScrollView
@@ -22,7 +31,8 @@
         android:layout_height="match_parent"
         android:paddingTop="?attr/actionBarSize"
         android:clipToPadding="false"
-        android:paddingBottom="28dp">
+        android:paddingBottom="32dp"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,41 +40,72 @@
             android:orientation="vertical"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:paddingTop="18dp"
+            android:paddingTop="24dp"
             android:gravity="center_horizontal">
 
             <!-- Banner card: logo + short message -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="?attr/colorSurfaceVariant"
-                android:layout_marginBottom="16dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="?attr/colorPrimaryContainer"
+                android:layout_marginBottom="20dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="14dp"
+                    android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:src="@drawable/logo_expense"
-                        android:contentDescription="@string/app_name"
-                        android:layout_marginEnd="12dp"
-                        app:tint="?attr/colorPrimary"/>
+                    <!-- Icon container with background -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        app:cardCornerRadius="30dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="?attr/colorPrimary"
+                        android:layout_marginEnd="16dp">
 
-                    <TextView
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/logo_expense"
+                            android:contentDescription="@string/app_name"
+                            app:tint="?attr/colorOnPrimary"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/home_subtitle"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        android:alpha="0.9"
-                        android:lineSpacingExtra="2dp"/>
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Track Your Spending"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnPrimaryContainer"
+                            android:alpha="0.9"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/home_subtitle"
+                            android:textAppearance="?attr/textAppearanceCaption"
+                            android:textColor="?attr/colorOnPrimaryContainer"
+                            android:alpha="0.7"
+                            android:layout_marginTop="2dp"
+                            android:lineSpacingExtra="2dp"/>
+
+                    </LinearLayout>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -73,40 +114,64 @@
                 android:id="@+id/card_add_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="6dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:strokeWidth="0dp"
                 app:cardBackgroundColor="?attr/colorSurfaceVariant">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="18dp">
+                    android:padding="24dp">
 
-                    <!-- Form header row -->
-                    <TextView
+                    <!-- Form header row with accent -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/btn_add_expense"
-                        android:textAppearance="?attr/textAppearanceSubtitle1"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp"/>
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="20dp">
 
-                    <!-- Amount -->
+                        <View
+                            android:layout_width="5dp"
+                            android:layout_height="28dp"
+                            android:background="?attr/colorPrimary"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/btn_add_expense"
+                            android:textAppearance="?attr/textAppearanceSubtitle1"
+                            android:textStyle="bold"
+                            android:textSize="20sp"/>
+
+                    </LinearLayout>
+
+                    <!-- Amount Input with icon -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_amount"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/amount"
-                        android:layout_marginTop="6dp"
-                        app:boxStrokeWidth="2dp">
+                        app:boxStrokeWidth="2dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:startIconDrawable="@android:drawable/ic_dialog_info"
+                        app:startIconTint="?attr/colorPrimary">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/et_amount"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="numberDecimal"
+                            android:textSize="16sp"
+                            android:paddingVertical="16dp"
                             android:imeOptions="actionNext"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -117,7 +182,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/currency"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="16dp"
+                        app:boxStrokeWidth="2dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
                         app:endIconMode="dropdown_menu">
 
                         <AutoCompleteTextView
@@ -125,6 +195,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="none"
+                            android:textSize="16sp"
+                            android:paddingVertical="16dp"
                             android:imeOptions="actionNext"
                             android:importantForAutofill="no"
                             android:completionThreshold="1"/>
@@ -137,10 +209,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/created_date"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="16dp"
+                        app:boxStrokeWidth="2dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
                         app:endIconMode="custom"
                         app:endIconDrawable="@drawable/ic_calendar_today"
-                        app:endIconContentDescription="@string/created_date_hint">
+                        app:endIconContentDescription="@string/created_date_hint"
+                        app:endIconTint="?attr/colorPrimary">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/et_date"
@@ -148,6 +226,8 @@
                             android:layout_height="wrap_content"
                             android:focusable="false"
                             android:clickable="true"
+                            android:textSize="16sp"
+                            android:paddingVertical="16dp"
                             android:imeOptions="actionNext"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -156,25 +236,55 @@
                         android:layout_height="wrap_content"
                         android:text="@string/hint_created_date"
                         android:textAppearance="?attr/textAppearanceCaption"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:alpha="0.7"
-                        android:layout_marginTop="6dp"/>
+                        android:layout_marginTop="6dp"
+                        android:paddingStart="16dp"/>
 
-                    <!-- Divider -->
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="?attr/colorOnSurfaceVariant"
-                        android:alpha="0.06"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp"/>
-
-                    <!-- Category (Exposed dropdown with ADD button) - FIXED -->
+                    <!-- Elegant Divider -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="4dp"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="?attr/colorOnSurfaceVariant"
+                            android:alpha="0.12"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Details"
+                            android:textAppearance="?attr/textAppearanceCaption"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:alpha="0.6"
+                            android:paddingHorizontal="12dp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.1"/>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="?attr/colorOnSurfaceVariant"
+                            android:alpha="0.12"/>
+
+                    </LinearLayout>
+
+                    <!-- Category (Exposed dropdown with ADD button) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:baselineAligned="false">
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/til_category"
@@ -183,66 +293,102 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="12dp"
-                            android:hint="@string/category">
+                            android:hint="@string/category"
+                            app:boxStrokeWidth="2dp"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp">
 
                             <AutoCompleteTextView
                                 android:id="@+id/actv_category"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="none"
+                                android:textSize="16sp"
+                                android:paddingVertical="16dp"
                                 android:imeOptions="actionNext"/>
 
                         </com.google.android.material.textfield.TextInputLayout>
 
-                        <!-- "+" Button to add new category - FIXED VISIBILITY -->
+                        <!-- Enhanced "+" Button to add new category -->
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_add_category"
+                            style="@style/Widget.Material3.Button.IconButton.Filled"
                             android:layout_width="56dp"
                             android:layout_height="56dp"
-                            android:text="+"
-                            android:textSize="24sp"
-                            android:textStyle="bold"
-                            android:gravity="center"
-                            app:backgroundTint="@color/md_primary"
-                            android:textColor="@color/md_on_primary"
-                            app:cornerRadius="28dp"
-                            app:elevation="4dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:insetLeft="0dp"
+                            android:insetRight="0dp"
+                            app:icon="@android:drawable/ic_input_add"
+                            app:iconGravity="textStart"
+                            app:iconPadding="0dp"
+                            app:iconSize="28dp"
+                            app:iconTint="?attr/colorOnPrimary"
+                            app:backgroundTint="?attr/colorPrimary"
+                            app:cornerRadius="16dp"
+                            app:elevation="6dp"
+                            app:rippleColor="?attr/colorOnPrimary"
                             android:layout_gravity="center_vertical" />
 
                     </LinearLayout>
 
-                    <!-- Remark -->
+                    <!-- Remark with enhanced styling -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_remark"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/remark"
-                        android:layout_marginTop="12dp">
+                        android:layout_marginTop="16dp"
+                        app:boxStrokeWidth="2dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="200">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/et_remark"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:paddingVertical="16dp"
+                            android:minLines="2"
+                            android:maxLines="4"
+                            android:gravity="top|start"
                             android:imeOptions="actionDone"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Save button -->
+                    <!-- Save button with enhanced styling -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_save"
-                        style="@style/Widget.MaterialComponents.Button"
+                        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="18dp"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="24dp"
                         android:text="@string/save"
-                        android:textAllCaps="false"/>
+                        android:textAllCaps="false"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="14dp"
+                        app:elevation="0dp"
+                        app:icon="@android:drawable/ic_menu_save"
+                        app:iconGravity="textStart"
+                        app:iconPadding="8dp"
+                        android:letterSpacing="0.02"/>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- bottom spacer -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="20dp"/>
+                android:layout_height="24dp"/>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

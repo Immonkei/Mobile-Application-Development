@@ -30,34 +30,26 @@ public class MainActivity extends BaseActivity {
         bottomNav = findViewById(R.id.bottom_nav);
         fm = getSupportFragmentManager();
 
-        // This block ONLY runs on the very first creation of the activity.
-        // After a language change, savedInstanceState is NOT null, so Android's
-        // FragmentManager handles re-creating the fragments.
         if (savedInstanceState == null) {
             initializeFragments();
         }
 
         setupBottomNavigation();
-        handleBackButton();
+        handleBackButton(); // This method has been corrected
 
-        // The logic to restore the selected tab needs to run on every creation,
-        // but we only set the default on the very first run.
         if (savedInstanceState == null) {
             bottomNav.setSelectedItemId(R.id.nav_home);
         }
     }
 
     private void initializeFragments() {
-        // Use a single transaction to add all fragments and hide the non-active ones.
-        // This prevents them from being visible all at once.
         fm.beginTransaction()
                 .add(R.id.fragment_container, new HomeFragment(), "home")
                 .add(R.id.fragment_container, new AddExpenseFragment(), "add")
                 .add(R.id.fragment_container, new ExpenseListFragment(), "list")
                 .add(R.id.fragment_container, SettingFragment.newInstance(), "setting")
-                .commitNow(); // Using commitNow to ensure fragments are available immediately
+                .commitNow();
 
-        // After adding, explicitly show the home fragment and hide the others.
         showFragmentByTag("home");
     }
 
@@ -72,7 +64,6 @@ public class MainActivity extends BaseActivity {
     private void showFragmentByTag(String tag) {
         Fragment fragmentToShow = fm.findFragmentByTag(tag);
         if (fragmentToShow == null) {
-            // This case should ideally not happen if initialization is correct.
             Log.e(TAG, "Fragment with tag " + tag + " not found!");
             return;
         }
@@ -88,23 +79,41 @@ public class MainActivity extends BaseActivity {
         transaction.commit();
     }
 
-
     private String getTagForItemId(int itemId) {
         if (itemId == R.id.nav_home) return "home";
         if (itemId == R.id.nav_add) return "add";
         if (itemId == R.id.nav_list) return "list";
         if (itemId == R.id.nav_setting) return "setting";
-        return "home";
+        return "home"; // Default to home
     }
 
+    // ===================================================================
+    // THIS IS THE CORRECTED METHOD
+    // ===================================================================
     private void handleBackButton() {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (bottomNav.getSelectedItemId() != R.id.nav_home) {
+                // STEP 1: Check if the FragmentManager can handle the back press.
+                // This is true if a detail screen (or any other fragment) was added to the back stack.
+                if (fm.getBackStackEntryCount() > 0) {
+                    // If there are fragments on the back stack, let the manager pop them.
+                    // This will correctly close the detail screen and show the list screen.
+                    fm.popBackStack();
+                }
+                // STEP 2: If the back stack is empty, THEN execute your custom bottom navigation logic.
+                else if (bottomNav.getSelectedItemId() != R.id.nav_home) {
+                    // If not on the home tab, navigate to the home tab.
                     bottomNav.setSelectedItemId(R.id.nav_home);
-                } else {
-                    finish();
+                }
+                // STEP 3: If back stack is empty AND you are on the home tab, let the system handle it (exit the app).
+                else {
+                    // This is the recommended way to call the default back button action
+                    // (which is to finish the activity) from within an OnBackPressedCallback.
+                    if (isEnabled()) {
+                        setEnabled(false);
+                        onBackPressed();
+                    }
                 }
             }
         });
@@ -113,17 +122,14 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Save the currently selected tab so we can restore it after recreation.
         outState.putInt(SELECTED_ITEM_KEY, bottomNav.getSelectedItemId());
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        // Restore the selected tab. This is called after onCreate.
         int selectedId = savedInstanceState.getInt(SELECTED_ITEM_KEY, R.id.nav_home);
         bottomNav.setSelectedItemId(selectedId);
-        // Also ensure the correct fragment is visible.
         showFragmentByTag(getTagForItemId(selectedId));
     }
 }

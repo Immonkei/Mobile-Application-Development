@@ -1,4 +1,6 @@
-package com.example.expensetracker.ui;import android.app.DatePickerDialog;
+package com.example.expensetracker.ui;
+
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,6 +46,8 @@ import retrofit2.Response;
 
 public class AddExpenseFragment extends Fragment {
 
+    public static final String KEY_EXPENSE_ADDED = "expense_added";
+
     private EditText etAmount, etDate, etRemark;
     private AutoCompleteTextView actvCurrency, actvCategory;
     private MaterialButton btnSave;
@@ -60,8 +64,6 @@ public class AddExpenseFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_add_expense, container, false);
 
-        // --- 1. INITIALIZE ALL VIEWS FIRST ---
-        // This is the most important step. Find every UI component.
         MaterialToolbar toolbar = root.findViewById(R.id.toolbar_add);
         etAmount = root.findViewById(R.id.et_amount);
         etDate = root.findViewById(R.id.et_date);
@@ -73,8 +75,6 @@ public class AddExpenseFragment extends Fragment {
 
         executorService = Executors.newSingleThreadExecutor();
 
-        // --- 2. SETUP LISTENERS AND HELPERS NEXT ---
-        // Now that all variables have a value, it is safe to use them.
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
         }
@@ -89,7 +89,6 @@ public class AddExpenseFragment extends Fragment {
         return root;
     }
 
-    // This method is now safe because we guarantee btnSave and btnAddCategory are not null.
     private void setupButtonListeners() {
         if (btnSave != null) {
             btnSave.setOnClickListener(v -> saveExpense());
@@ -109,10 +108,6 @@ public class AddExpenseFragment extends Fragment {
         super.onResume();
         loadCategoriesFromDatabase();
     }
-
-    // ... The rest of your file (saveExpense, loadCategoriesFromDatabase, etc.) remains the same ...
-    // Make sure the other methods from your original file are still present below this line.
-    // I am omitting them here for brevity, but you should keep them in your file.
 
     private void setupCurrencySpinner() {
         ArrayAdapter<String> currencyAdapter = new ArrayAdapter<>(
@@ -189,7 +184,6 @@ public class AddExpenseFragment extends Fragment {
             });
         });
     }
-
 
     private void addDefaultCategories() {
         String[] defaultCategories = getResources().getStringArray(R.array.category_array);
@@ -286,6 +280,17 @@ public class AddExpenseFragment extends Fragment {
                     if (response.isSuccessful()) {
                         Toast.makeText(requireContext(), getString(R.string.expense_saved), Toast.LENGTH_SHORT).show();
                         clearForm();
+
+                        // Notify ExpenseListFragment that new expense was added
+                        Bundle result = new Bundle();
+                        result.putBoolean(KEY_EXPENSE_ADDED, true);
+                        getParentFragmentManager().setFragmentResult(KEY_EXPENSE_ADDED, result);
+
+                        // DON'T navigate back - stay on add expense screen
+                        // requireActivity().onBackPressed(); // REMOVED THIS LINE
+
+                        // Optional: Scroll to top or show confirmation message
+                        Toast.makeText(requireContext(), "Expense saved! You can add another.", Toast.LENGTH_SHORT).show();
                     } else {
                         String errorMsg = "Failed to save: " + response.code();
                         Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();

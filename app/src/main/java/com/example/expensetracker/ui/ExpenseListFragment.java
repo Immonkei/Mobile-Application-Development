@@ -37,6 +37,24 @@ public class ExpenseListFragment extends Fragment {
     private boolean firstLoadDone = false;
     private static long lastClickTime = 0;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Listen for new expense added from AddExpenseFragment
+        getParentFragmentManager().setFragmentResultListener(
+                AddExpenseFragment.KEY_EXPENSE_ADDED,
+                this,
+                (requestKey, result) -> {
+                    // Refresh the list when new expense is added
+                    if (result != null && result.getBoolean(AddExpenseFragment.KEY_EXPENSE_ADDED, false)) {
+                        Log.d(TAG, "Received expense added notification, refreshing list");
+                        loadExpenses();
+                    }
+                }
+        );
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,

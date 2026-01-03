@@ -30,6 +30,7 @@ import com.example.expensetracker.data.ExpenseApi;
 import com.example.expensetracker.data.RetrofitClient;
 import com.example.expensetracker.model.Category;
 import com.example.expensetracker.model.Expense;
+import com.example.expensetracker.utils.NotificationHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
@@ -387,6 +388,18 @@ public class AddExpenseFragment extends Fragment {
                 public void onResponse(@NonNull Call<Expense> call, @NonNull Response<Expense> response) {
                     btnSave.setEnabled(true);
                     if (response.isSuccessful()) {
+
+                        String safeCurrency = currency.trim().toUpperCase();
+
+                        if (safeCurrency.contains("USD") && amount > 100) {
+                            NotificationHelper.showBudgetWarning(requireContext(), remark);
+                        }
+
+                        if (safeCurrency.contains("KHR") && amount > 400000) {
+                            NotificationHelper.showBudgetWarning(requireContext(), remark);
+                        }
+
+
                         Toast.makeText(requireContext(), getString(R.string.expense_saved), Toast.LENGTH_SHORT).show();
                         clearForm();
 
@@ -395,10 +408,7 @@ public class AddExpenseFragment extends Fragment {
                         result.putBoolean(KEY_EXPENSE_ADDED, true);
                         getParentFragmentManager().setFragmentResult(KEY_EXPENSE_ADDED, result);
 
-                        // DON'T navigate back - stay on add expense screen
-                        // requireActivity().onBackPressed(); // REMOVED THIS LINE
 
-                        // Optional: Scroll to top or show confirmation message
                         Toast.makeText(requireContext(), "Expense saved! You can add another.", Toast.LENGTH_SHORT).show();
                     } else {
                         String errorMsg = "Failed to save: " + response.code();

@@ -1,5 +1,6 @@
 package com.example.expensetracker;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.activity.OnBackPressedCallback;
@@ -26,6 +27,20 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // ✅ Android 13+ notification permission
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
+                        101
+                );
+            }
+        }
+
+        createNotificationChannel();
+
 
         bottomNav = findViewById(R.id.bottom_nav);
         fm = getSupportFragmentManager();
@@ -132,4 +147,25 @@ public class MainActivity extends BaseActivity {
         bottomNav.setSelectedItemId(selectedId);
         showFragmentByTag(getTagForItemId(selectedId));
     }
+//    Notivication-Chhanel
+    private void createNotificationChannel() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            android.app.NotificationChannel channel =
+                    new android.app.NotificationChannel(
+                            "budget_channel",
+                            "Budget Warning",
+                            android.app.NotificationManager.IMPORTANCE_HIGH
+                    );
+
+            channel.setDescription("Budget limit warning notifications");
+
+            android.app.NotificationManager manager =
+                    getSystemService(android.app.NotificationManager.class);
+
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+    }
+
 }

@@ -28,10 +28,16 @@ public class Expense implements Serializable {
     @SerializedName("createdDate")
     private String createdDate;
 
-    // default constructor (Gson)
-    public Expense() { }
+    @SerializedName("receiptImageUrl")
+    private String receiptImageUrl;
 
-    public Expense(String id, double amount, String currency, String category, String remark, String createdBy, String createdDate) {
+
+    // default constructor (Gson)
+    public Expense() {
+    }
+
+    public Expense(String id, double amount, String currency, String category, String remark, String createdBy, String createdDate,String receiptImageUrl
+    ) {
         this.id = id;
         this.amount = amount;
         this.currency = currency;
@@ -39,11 +45,12 @@ public class Expense implements Serializable {
         this.remark = remark;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
+        this.receiptImageUrl= receiptImageUrl;
     }
 
     // convenience constructor for creating new expense (id & createdDate may be generated client-side)
-    public Expense(double amount, String currency, String category, String remark, String createdBy, String createdDate) {
-        this(null, amount, currency, category, remark, createdBy, createdDate);
+    public Expense(double amount, String currency, String category, String remark, String createdBy, String createdDate ,String receiptImageUrl) {
+        this(null, amount, currency, category, remark, createdBy, createdDate ,receiptImageUrl);
     }
 
     // getters & setters
@@ -67,4 +74,11 @@ public class Expense implements Serializable {
 
     public String getCreatedDate() { return createdDate; }
     public void setCreatedDate(String createdDate) { this.createdDate = createdDate; }
+    public String getReceiptImageUrl() {
+        return receiptImageUrl;
+    }
+    public void setReceiptImageUrl(String receiptImageUrl) {
+        this.receiptImageUrl = receiptImageUrl;
+    }
+
 }

@@ -287,6 +287,16 @@
 
                     </LinearLayout>
 
+                    <!--///image-->
+                    <ImageView
+                        android:id="@+id/img_detail_receipt"
+                        android:layout_width="match_parent"
+                        android:layout_height="220dp"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        android:layout_marginTop="12dp"/>
+
+
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>

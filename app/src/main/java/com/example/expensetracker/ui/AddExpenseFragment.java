@@ -1,8 +1,13 @@
 package com.example.expensetracker.ui;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +35,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,9 +52,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class AddExpenseFragment extends Fragment {
 
     public static final String KEY_EXPENSE_ADDED = "expense_added";
+
+    private static final int REQ_GALLERY = 200;
+    private static final int REQ_CAMERA = 201;
+
+    private Button btnGallery, btnCamera;
+    private ImageView imgReceipt;
+    private Uri receiptImageUri;
 
     private EditText etAmount, etDate, etRemark;
     private AutoCompleteTextView actvCurrency, actvCategory;
@@ -54,9 +70,12 @@ public class AddExpenseFragment extends Fragment {
     private Button btnAddCategory;
     private ArrayAdapter<String> categoryAdapter;
     private ExecutorService executorService;
+    private Uri cameraImageUri;
+
 
     public AddExpenseFragment() {}
 
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -72,6 +91,10 @@ public class AddExpenseFragment extends Fragment {
         actvCategory = root.findViewById(R.id.actv_category);
         btnSave = root.findViewById(R.id.btn_save);
         btnAddCategory = root.findViewById(R.id.btn_add_category);
+        btnGallery = root.findViewById(R.id.btn_gallery);
+        btnCamera = root.findViewById(R.id.btn_camera);
+        imgReceipt = root.findViewById(R.id.img_receipt);
+
 
         executorService = Executors.newSingleThreadExecutor();
 
@@ -101,7 +124,48 @@ public class AddExpenseFragment extends Fragment {
         } else {
             Log.e("AddExpenseFragment", "btnAddCategory is null. Check R.id.btn_add_category in your layout.");
         }
+        if (btnGallery != null) {
+            btnGallery.setOnClickListener(v -> pickFromGallery());
+        }
+
+        if (btnCamera != null) {
+            btnCamera.setOnClickListener(v -> openCameraWithPermission());
+        }
     }
+    private void pickFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQ_GALLERY);
+    }
+
+    private void openCameraWithPermission() {
+        if (requireContext().checkSelfPermission(android.Manifest.permission.CAMERA)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(
+                    new String[]{android.Manifest.permission.CAMERA},
+                    REQ_CAMERA
+            );
+        } else {
+            openCamera();
+        }
+    }
+
+    private void openCamera() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "Expense Receipt");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "Camera Image");
+
+        cameraImageUri = requireContext()
+                .getContentResolver()
+                .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri);
+        startActivityForResult(intent, REQ_CAMERA);
+    }
+
+
 
     @Override
     public void onResume() {
@@ -215,10 +279,46 @@ public class AddExpenseFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != requireActivity().RESULT_OK) return;
+
+        // Category added
         if (requestCode == 100) {
             loadCategoriesFromDatabase();
+            return;
+        }
+
+        // Gallery image
+        if (requestCode == REQ_GALLERY && data != null) {
+            receiptImageUri = data.getData();
+        }
+        // Camera image
+        else if (requestCode == REQ_CAMERA) {
+            receiptImageUri = cameraImageUri;
+        }
+
+
+        if (receiptImageUri != null) {
+            imgReceipt.setVisibility(View.VISIBLE);
+            imgReceipt.setImageURI(receiptImageUri);
         }
     }
+    private Uri saveImageToLocal(Bitmap bitmap) {
+        File file = new File(
+                requireContext().getFilesDir(),
+                "receipt_" + System.currentTimeMillis() + ".jpg"
+        );
+
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Uri.fromFile(file);
+    }
+
+
 
     private boolean validate() {
         boolean okAmount = etAmount.getText() != null && !etAmount.getText().toString().trim().isEmpty();
@@ -265,8 +365,17 @@ public class AddExpenseFragment extends Fragment {
                 uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             }
 
-            String id = UUID.randomUUID().toString();
-            Expense newExpense = new Expense(id, amount, currency, category, remark, uid, createdDate);
+//            String id = UUID.randomUUID().toString();
+            Expense newExpense = new Expense(
+                    amount,
+                    currency,
+                    category,
+                    remark,
+                    uid,
+                    createdDate,
+                    receiptImageUri != null ? receiptImageUri.toString() : null
+            );
+
 
             btnSave.setEnabled(false);
 
@@ -321,6 +430,12 @@ public class AddExpenseFragment extends Fragment {
         if (actvCategory != null) actvCategory.setText("", false);
         etAmount.requestFocus();
         validate();
+        receiptImageUri = null;
+        if (imgReceipt != null) {
+            imgReceipt.setVisibility(View.GONE);
+            imgReceipt.setImageDrawable(null);
+        }
+
     }
 
     private void runOnUiThread(Runnable action) {

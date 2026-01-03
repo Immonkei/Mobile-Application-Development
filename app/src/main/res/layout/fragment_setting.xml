@@ -211,7 +211,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="© 2024 Your App Name"
+                    android:text="©2025 Flow and Focus by Min Phanith"
                     android:textSize="12sp"
                     android:textColor="@color/md_outline"
                     android:alpha="0.7" />

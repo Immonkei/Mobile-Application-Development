@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 
     <application
         android:allowBackup="true"
@@ -30,8 +37,9 @@
 
         <!-- DetailExpense screen is internal only -->
         <activity
-            android:name=".detail.DetailExpenseActivity"
-            android:exported="false" />
+            android:name=".ui.ExpenseDetailFragment"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
 
         <!-- MainActivity is the main UI, but it is NOT a launcher. -->
         <!-- It should only be started by LoginActivity. -->

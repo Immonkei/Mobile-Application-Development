@@ -124,14 +124,13 @@ This repository contains the complete implementation of the **Expense Tracker An
 
 ---
 
----
 
 
 
 ## ✅ Final Status
 ✔ Labs 1–8 completed successfully  
 ✔ Application is fully functional  
-✔ Ready for submission 🎉
+✔ Got Top 2 student in this course
 
 ---
 

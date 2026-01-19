@@ -1,7 +1,7 @@
 # 📱✨ Mobile Application Development I – Project Summary
 
 > **Course:** Mobile Application Development I  
-> **Instructor:** Hang Sopheak  ([@hangsopheak](https://github.com/hangsopheak))
+> **Instructor:** Hang Sopheak([@hangsopheak](https://github.com/hangsopheak))
 > **Student:** Min Phanith  
 > **Project:** Expense Tracker Android Application
 

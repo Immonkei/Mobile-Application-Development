@@ -1,9 +1,10 @@
 # 📱✨ Mobile Application Development I – Project Summary
 
 > **Course:** Mobile Application Development I  
-> **Instructor:** Hang Sopheak([@hangsopheak](https://github.com/hangsopheak))
+> **Instructor:** Hang Sopheak ([@hangsopheak](https://github.com/hangsopheak))  
 > **Student:** Min Phanith  
 > **Project:** Expense Tracker Android Application
+
 
 ---
 
@@ -130,11 +131,11 @@ This repository contains the complete implementation of the **Expense Tracker An
 ## ✅ Final Status
 ✔ Labs 1–8 completed successfully  
 ✔ Application is fully functional  
-✔ Got Top 2 student in this course
+✔ Achieved Top 2 ranking in the course
 
 ---
 
 **Author:** Min Phanith  
-**Instructor:** Hang Sopheak  
+**Instructor:** Hang Sopheak ([@hangsopheak](https://github.com/hangsopheak))  
 **Course:** Mobile Application Development I  
 **Project:** Expense Tracker
